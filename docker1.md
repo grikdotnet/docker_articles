@@ -89,4 +89,4 @@ a486da044a3f: Download complete
 
 Теперь вы поймете официальную документацию.
 
-Продолжение: https://github.com/grikdotnet/docker_articles/blob/master/dicker2.md
+Продолжение: https://github.com/grikdotnet/docker_articles/blob/master/docker2.md
