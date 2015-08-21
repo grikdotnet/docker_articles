@@ -1,4 +1,4 @@
-Docker myths and receipts. Building environment
+Docker myths and receipts. HowNotTo
 ========
 
 Начало: https://github.com/grikdotnet/docker_articles/blob/master/docker1.md
@@ -16,7 +16,8 @@ COPY . /usr/src/myapp
 WORKDIR /usr/src/myapp
 ```
 
-Да, нам предлагают унаследовать Controller от View в одном звездном классе. В случае с Python и Ruby это даже не предлагает, авторы  захардкодили это в триггерах, которых, как и 640 килобайт, "should be all you need"(Ruby).
+Да, нам предлагают унаследовать Controller от View в одном звездном классе. В случае с Python и Ruby это даже не предлагает, авторы  захардкодили это в триггерах, которыe, как и 640 килобайт, "should be all you need"(Ruby).
+
 К счастью, решение известно так же давно как проблема. Банда четырех, создатель Java Джеймс Гослинг и Фаулер последние 20 лет твердят: используйте композицию вместо наследования.
 Поэтому я положу контейнеры рядом и залинкую их через строку запуска.
 
