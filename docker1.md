@@ -1,40 +1,46 @@
 Docker myths and receipts. Introduction.
 ========
 
-Вокруг постоянно говорят про Docker. А, да, это что-то про контейнеры, виртуализацию, облака. У вас все и так работает. Это все баловство. Он не запустится на вашем старом ядре линукса. Точно так же можно подготовить образ для облака и запустить его. Можно просто настроить LXC, chroot или AppArmor. Вам он не нужен. Очередная модная штука. В конце концов, просто лень разобираться. 
+Если вы не слышали о контейнерах в Линуксе, вот список страниц, которые надо прочитать чтобы понимать о чем вообще здесь речь.
+https://en.wikipedia.org/wiki/LXC
+https://en.wikipedia.org/wiki/UnionFS
+http://habrahabr.ru/post/253877/ или https://www.docker.com/whatisdocker
+
+Вокруг постоянно говорят про Docker. Это что-то про контейнеры, виртуализацию, облака. У вас все и так работает. Это все баловство. Он не запустится на вашем старом ядре линукса. Точно так же можно подготовить образ для облака и запустить его. Можно просто настроить LXC, chroot или AppArmor. Вам он не нужен. Очередная модная штука. В конце концов, просто лень разобираться. 
 Но любопытно! Тогда, читайте.
+И поставьте Docker, он небольшой. Для Windows и Mac просто ставьте Docker Toolbox: https://www.docker.com/toolbox
 
 **Docker - это не виртуализация.**
 
 Вот какой у меня линукс:
 ```
-docker@dev:~$ uname -a
-Linux dev 4.0.7-boot2docker #1 SMP Wed Jul 15 00:01:41 UTC 2015 x86_64 GNU/Linux
-docker@dev:~$ free -h
-              total        used        free      shared  buff/cache   available
-Mem:           2.0G         43M        500M        106M        1.4G        1.6G
-Swap:          1.4G          0B        1.4G
-```
-Запускаю убунту
-```
-docker@dev:~$ docker run -ti ubuntu
-root@8d9f8ada3ce0:/# lsb_release -a
-No LSB modules are available.
-Distributor ID:	Ubuntu
-Description:	Ubuntu 14.04.3 LTS
-Release:	14.04
-Codename:	trusty
-root@8d9f8ada3ce0:/# uname -a
-Linux 8d9f8ada3ce0 4.0.7-boot2docker #1 SMP Wed Jul 15 00:01:41 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux
-root@a24e29d3b492:/# free -h
-             total       used       free     shared    buffers     cached
-Mem:          2.0G       1.5G       491M       106M        47M       1.2G
--/+ buffers/cache:       202M       1.8G
-Swap:         1.4G         0B       1.4G
-```
-То же ядро, та же память, а дистрибутив - другой.
+Welcome to Ubuntu 15.04 (GNU/Linux 3.19.0-15-generic x86_64)
 
-Docker - это не chroot, их функционал частично совпадает. Это не система безопасности вроде AppArmor. Docker использует LXC как обертка, но интересен он не контейнерами. Docker - это ничего из того, что я думал о нем до того, как прочитал документацию.
+Last login: Tue Aug 18 00:43:50 2015 from 192.168.48.1
+gri@ubuntu:~$ uname -a
+Linux ubuntu 3.19.0-15-generic #15-Ubuntu SMP Thu Apr 16 23:32:37 UTC 2015 x86_64 x86_64 x86_64 GNU/                                       Linux
+gri@ubuntu:~$ free -h
+             total       used       free     shared    buffers     cached
+Mem:          976M       866M       109M        11M       110M       514M
+-/+ buffers/cache:       241M       735M
+Swap:         1.0G       1.0M       1.0G
+```
+Запускаю CentOS
+```
+gri@ubuntu:~$ docker run -ti centos
+[root@301fc721eeb9 /]# uname -a
+Linux 301fc721eeb9 3.19.0-15-generic #15-Ubuntu SMP Thu Apr 16 23:32:37 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux
+[root@301fc721eeb9 /]# cat /etc/redhat-release
+CentOS Linux release 7.1.1503 (Core)
+[root@301fc721eeb9 /]# free -h
+              total        used        free      shared  buff/cache   available
+Mem:           976M         85M        100M         12M        790M        677M
+Swap:          1.0G        1.0M        1.0G
+
+```
+То же ядро, та же память, а дистрибутив и файловая система - разные.
+
+Docker - это не chroot, их функционал частично совпадает. Это не система безопасности вроде AppArmor. Docker использует те же контейнеры, что и LXC, но интересен он не контейнерами. Docker - это ничего из того, что я думал о нем до того, как прочитал документацию.
 
 **Docker - это инструмент объекто-ориентированного проектирования.**
 
@@ -76,3 +82,4 @@ a486da044a3f: Download complete
 Есть много образов на базе ubuntu. Конечно, стоит собирать свою систему из образов с одним предком.
 
 Теперь вы поймете документацию.
+
