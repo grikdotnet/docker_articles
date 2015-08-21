@@ -54,8 +54,10 @@ https://en.wikipedia.org/wiki/LXC
 https://en.wikipedia.org/wiki/UnionFS
 http://habrahabr.ru/post/253877/ или https://www.docker.com/whatisdocker
 Поставьте Docker, он небольшой. Для Windows и Mac просто ставьте Docker Toolbox: https://www.docker.com/toolbox
+Пройдите несколько уроков из мануала, основ и документации здесь не будет.
 
 **Начало**
+
 Итак, я открыл https://docs.docker.com/mac/started/, поставил Docker, выполнил несколько упражнений, и почувствовал, что меня держат за дурачка-двоечника, которого боятся перегрузить информацией.
 Первый вопрос: куда это чертов докер поставился, где лежат его файлы, в каком формате, как оно все устроено?
 Ответы здесь: http://blog.thoward37.me/articles/where-are-docker-images-stored/
