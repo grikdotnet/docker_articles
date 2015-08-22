@@ -24,9 +24,8 @@ docker@dev:~/monkeypatch$ docker create nginx --name=nginx
 docker@dev:~/monkeypatch$ docker ps -ql
 80be81b27e01
 ```
-Где лежат конфиги для PHP можно увидеть в его [Dockerfile]((https://github.com/docker-library/php/blob/789a45b03fe31ca1ac7f490bafe300e728b18bb9/7.0/fpm/Dockerfile)).
+Для Nginx расположение конфигов стандартизировано. Где лежат конфиги для PHP можно увидеть в его [Dockerfile]((https://github.com/docker-library/php/blob/789a45b03fe31ca1ac7f490bafe300e728b18bb9/7.0/fpm/Dockerfile)).
 > ENV PHP_INI_DIR /usr/local/etc/php
-Для Nginx пути стандартизированы.
 
 ```
 docker@dev:~/monkeypatch$ docker cp  9bec96509f99:/usr/local/etc/php .
