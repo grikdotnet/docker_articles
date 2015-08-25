@@ -28,7 +28,7 @@ docker@dev:~/monkeypatch$ docker ps -ql
 > ENV PHP_INI_DIR /usr/local/etc/php
 
 ```
-docker@dev:~/monkeypatch$ docker cp  9bec96509f99:/usr/local/etc/php .
+docker@dev:~/monkeypatch$ docker cp 9bec96509f99:/usr/local/etc/php .
 docker@dev:~/monkeypatch$ docker cp 80be81b27e01:/etc/nginx .
 docker@dev:~/monkeypatch$ ls
 nginx/ php/
