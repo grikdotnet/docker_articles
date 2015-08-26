@@ -9,6 +9,7 @@ https://en.wikipedia.org/wiki/LXC
 https://en.wikipedia.org/wiki/UnionFS
 http://habrahabr.ru/post/253877/ или https://www.docker.com/whatisdocker
 Поставьте Docker, он небольшой. Для Windows и Mac можно просто поставить Toolbox: https://www.docker.com/toolbox
+Создавать виртуальную машину и настраивать надо из командной строки, не 
 Заметки для пользоватлей MAC OS [здесь](https://github.com/grikdotnet/docker_articles/blob/master/docker_mac.md)
 Прочитайте несколько уроков из мануала, здесь я написал о том, чего в документации нет.
 
@@ -87,6 +88,37 @@ a486da044a3f: Download complete
 ```
 Пишут, что у образа nginx 1.9.4 размер 52 мб, а качает он всего 3 мб, потому что Nginx собран на образе debian:jessie, который у меня "Already exists".
 Есть много образов на базе ubuntu. Конечно, стоит собирать свою систему из образов с одним предком.
+
+**Docker - это системная служба с клиентским приложением**
+
+Соответственно, Docker может и зависнуть. Например, если при скачивании образа пропадает связь, может потребоваться перезапустить службу.
+```
+docker@dev:~$ docker pull debian
+Using default tag: latest
+latest: Pulling from library/debian
+2c49f83e0b13: Downloading [===================>                               ] 19.89 MB/51.37 MB
+4a5e6db8c069: Download complete
+```
+Нажимаю Ctrl-C, затем сразу запускаю скачивание повторно.
+```
+docker@dev:~$ docker pull debian
+Using default tag: latest
+```
+Картина Репина "Приплыли". То есть, зависли. Надо перезапустить демон.
+```
+docker@dev:~$ sudo /etc/init.d/docker restart
+Need TLS certs for dev,127.0.0.1,10.0.2.15,192.168.99.104
+-------------------
+docker@dev:~$ sudo /etc/init.d/docker status
+Docker daemon is running
+docker@dev:~$ docker pull debian
+Using default tag: latest
+latest: Pulling from library/debian
+...
+Status: Downloaded newer image for debian:latest
+```
+Бывает, что при демон Docker не хочет умирать самостоятельно и не освобождает порт, а init-скрипт пограничные случаи еще не отрабатывает.
+Так что не забывайте проверять `sudo /etc/init.d/docker status`, `sudo netstat -ntpl`, доставайте бубен и танцуйте.
 
 Теперь вам будет проще разбираться с официальной документацией.
 

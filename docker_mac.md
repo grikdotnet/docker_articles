@@ -1,12 +1,14 @@
-Docker myths and receipts. Mac troubles
+Docker myths and receipts. Mac OS X
 ========
 
-Tired to type `$ docker full_command` every time?
-Set up the [bash-completion с дополнением docker](http://stackoverflow.com/questions/26132451) and enjoy.
+* VMWare Fusion and Parallels Desktop are better then VirtualBox in performance and stability.
 
-If you have a general experience in unixes, it is recommended to install a VirtualBox [test build](https://www.virtualbox.org/wiki/Testbuilds) and update it periodically rather then using the one from the Docker Toolbox.
+* At the moment of writing the Kinematic app sometimes can't do the work. If you have general experience in unix and want to use Virtual Box, I recommended installing a [test build](https://www.virtualbox.org/wiki/Testbuilds) and update it periodically rather than using a VirtualBox installed with the Docker Toolbox. Maybe it will get fixed later.
 
-Docker-machine is a nice tool. Use it to create a Docker virtual machine and open a terminal.
+* Tired to type `$ docker full_command` every time?
+Set up the [bash-completion with docker extension](http://stackoverflow.com/a/26132452) and enjoy.
+
+* Docker-machine is a nice tool. Use it to create a Docker virtual machine and open a terminal.
 
 ```
 airgri:~ gri$ docker-machine create --driver virtualbox dev
@@ -37,9 +39,18 @@ Docker version 1.8.1, build d12ea79
 docker@dev:~$
 ```
 
-If you see an error
->Error creating machine: Get https://api.github.com/repos/boot2docker/boot2docker/releases: dial tcp: lookup api.github.com: no DNS servers
+* If you see an error
+
+> `Error creating machine: Get https://api.github.com/repos/boot2docker/boot2docker/releases: dial tcp: lookup api.github.com: no DNS servers`
 
 add a resolving server to your /etc/resolv.conf, like "`nameserver 8.8.8.8`"
+
+
 Of course, OSX will overwrite it on next reboot, but you don't need it too often.
 
+* docker-machine (as well as boot2docker) mounts the /Users folder from a host Mac OS to the /Users folder of a virtual machine. Not to a docker container.
+
+```
+	docker@dev:~$ mount |grep Users
+	none on /Users type vboxsf (rw,nodev,relatime)
+```

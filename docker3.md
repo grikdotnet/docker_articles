@@ -11,8 +11,8 @@ docker@dev:~$ docker pull php:7
 Status: Downloaded newer image for php:7
 ```
 
-Теперь у меня два есть чужих класса обычного качества, которые надо связать вместе через инъекцию завиимостей. Самый простой способ инъектить зависимости в чужой код, конечно же, [monkeypatching](https://ru.wikipedia.org/wiki/Monkey_patch)!
-Сначала создаю контейнеры. Помню о [второй главной сложности программирования](http://martinfowler.com/bliki/TwoHardThings.html) - даю контейнерам вразумительные имена. Короткие ID моих контейнеров мне нужны чтобы удобней к ним обращаться.
+Теперь у меня есть два чужих класса обычного качества, которые надо связать вместе через инъекцию завиимостей. Самый простой способ инъектить зависимости в чужой код, конечно же, [monkeypatching](https://ru.wikipedia.org/wiki/Monkey_patch)!
+Сначала создаю контейнеры. Помню о [второй сложности программирования](http://martinfowler.com/bliki/TwoHardThings.html) - даю контейнерам вразумительные имена, они будут нужны чтобы контейнеры могли взаимодействовать между собой.
 ```
 docker@dev:~$ mkdir monkeypatch
 docker@dev:~$ cd monkeypatch/
@@ -24,10 +24,15 @@ docker@dev:~/monkeypatch$ docker create nginx --name=nginx
 docker@dev:~/monkeypatch$ docker ps -ql
 80be81b27e01
 ```
-Для Nginx расположение конфигов стандартизировано. Где лежат конфиги для PHP можно увидеть в его [Dockerfile]((https://github.com/docker-library/php/blob/789a45b03fe31ca1ac7f490bafe300e728b18bb9/7.0/fpm/Dockerfile)).
-> ENV PHP_INI_DIR /usr/local/etc/php
-
+Для Nginx расположение конфигов стандартизировано. Где лежат конфиги для PHP можно увидеть в его [Dockerfile]((https://github.com/docker-library/php/blob/789a45b03fe31ca1ac7f490bafe300e728b18bb9/7.0/fpm/Dockerfile)):
 ```
+ENV PHP_INI_DIR /usr/local/etc/php
+   --with-config-file-scan-dir="$PHP_INI_DIR/conf.d" \
+WORKDIR /var/www/html
+COPY php-fpm.conf /usr/local/etc/
+```
+```
+docker@dev:~/monkeypatch$ docker cp 9bec96509f99:/usr/local/etc/php .
 docker@dev:~/monkeypatch$ docker cp 9bec96509f99:/usr/local/etc/php .
 docker@dev:~/monkeypatch$ docker cp 80be81b27e01:/etc/nginx .
 docker@dev:~/monkeypatch$ ls
