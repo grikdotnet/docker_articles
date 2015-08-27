@@ -91,7 +91,11 @@ a486da044a3f: Download complete
 
 **Docker - это системная служба с клиентским приложением**
 
-Соответственно, Docker может и зависнуть. Например, если при скачивании образа пропадает связь, может потребоваться перезапустить службу.
+Служба Docker управляет контейнерами - запускает по команде, полученной от клиентского приложения `docker` и останавливает его когда в контейнере освобождается поток стандартного ввода-вывода. Поэтому в конфигурации Nginx для Docker [пишут](https://hub.docker.com/_/nginx/): 
+
+> Be sure to include daemon off; in your custom configuration to ensure that Nginx stays in the foreground so that Docker can track the process properly (otherwise your container will stop immediately after starting)!
+
+Соответственно, служба Docker может и зависнуть. Например, если в версии 1.8.1 при скачивании образа пропадает связь, может потребоваться перезапустить службу.
 ```
 docker@dev:~$ docker pull debian
 Using default tag: latest
@@ -119,6 +123,8 @@ Status: Downloaded newer image for debian:latest
 ```
 Бывает, что при демон Docker не хочет умирать самостоятельно и не освобождает порт, а init-скрипт пограничные случаи еще не отрабатывает.
 Так что не забывайте проверять `sudo /etc/init.d/docker status`, `sudo netstat -ntpl`, доставайте бубен и танцуйте.
+
+Еще надо помнить, что порядок операторов для команды docker имеет значение. Если написать `docker create nginx --name=nginx`, --name=nginx будет считаться командой, которую надо выполнить в контейнере, а не именем контейнера.
 
 Теперь вам будет проще разбираться с официальной документацией.
 
