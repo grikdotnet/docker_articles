@@ -58,7 +58,7 @@ opcache.so
 docker@dev:~/monkeypatch$ echo extension_dir = "/usr/local/lib/php/extensions/no-debug-non-zts-20141001" >>  localetc/php/php.ini
 docker@dev:~/monkeypatch$ echo zend_extension = opcache.so >> localetc/php/php.ini
 ```
-Пересоздаю контейнер php и монтируя в него папку с конифгами. Путь к монтируемой папке должен быть от корня - служба не знает из какой папки вызывается клент docker.
+Пересоздаю контейнер php и монтирую в него папку с конифгами. Путь к монтируемой папке должен быть от корня - служба не знает из какой папки вызывается клент docker.
 ```
 $ docker rm php7
 php7
@@ -66,7 +66,7 @@ docker@dev:~/monkeypatch$ docker run -v `pwd`/localetc:/usr/local/etc --name=php
 Configuration File (php.ini) Path => /usr/local/etc/php
 Loaded Configuration File => /usr/local/etc/php/php.ini
 ```
-Так можно редактировать конфиги php в localetc и пересоздавать контейнер.
+Так можно редактировать конфиги php в `localetc/` и пересоздавать контейнер.
 
 Для сравнения:
 ```
