@@ -14,9 +14,9 @@ Status: Downloaded newer image for php:7
 Теперь у меня есть два чужих класса обычного качества, которые надо связать вместе через инъекцию завиимостей. Самый простой способ инъектить зависимости в чужой код, конечно же, [monkeypatching](https://ru.wikipedia.org/wiki/Monkey_patch)!
 Сначала создаю контейнеры. Помню о [второй сложности программирования](http://martinfowler.com/bliki/TwoHardThings.html) - даю контейнерам вразумительные имена, они будут нужны чтобы контейнеры могли взаимодействовать между собой.
 ```
-$ docker create --name=php7 php:7-fpm
+~$ docker create --name=php7 php:7-fpm
 3d1b737edfcc3f1102fa54c91f9120da4b86d8cbba3092b6f80156c0e31b4d8f
-$ docker create --name=nginx nginx
+~$ docker create --name=nginx nginx
 80be81b27e012fd061ff4b682f0b7b8803500bc38a4b9f787f91661603b2d4b7
 ```
 
