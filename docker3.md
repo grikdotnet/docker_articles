@@ -3,11 +3,15 @@ Docker myths and receipts. Monkey patch
 
 Начало: https://github.com/grikdotnet/docker_articles/blob/master/docker1.md
 
+### Настройка локально
+
+В этой статье я предполагаю, что служба docker запущена на той же машине, на которой выполняются команды, и у процесса есть доступ на чтение к текущей папке.
+
 Беру образы Nginx и PHP 7.
 ```
 ~$ docker pull nginx
 ...
-~$ docker pull php:7
+~$ docker pull php:7-fpm
 Status: Downloaded newer image for php:7
 ```
 
@@ -27,9 +31,6 @@ Status: Downloaded newer image for php:7
 	WORKDIR /var/www/html
 	COPY php-fpm.conf /usr/local/etc/
 ```
-### Настройка локально
-
-Пример ниже предполагает, что вы выполняете команды docker на той же системе, на которой работает служба Docker.
 ```
 ~$ mkdir monkeypatch
 ~$ cd monkeypatch/
@@ -40,12 +41,12 @@ pear.conf		php			php-fpm.conf		php-fpm.conf.default	php-fpm.d
 $ ls localetc/php
 conf.d
 ```
-Мейнтейнеры образа положили в образ php-fpm.conf, но не удосужились положить дефолтный php.ini. Придется взять его из исходников php.
+Мейнтейнеры положили в образ php-fpm.conf, но не удосужились положить дефолтный php.ini. Придется взять его из исходников php.
 
 	$ docker cp $PHP7:/usr/src/php/php.ini-development localetc/php/php.ini
 
 Правлю конфиги, как обычно. В какой папке PHP ищет расширения? Узнать придется у самого php.
-Посмотреть конфигурацию php можно, запустив его во временном контейнере.
+Посмотреть конфигурацию php можно, запустив его, например, во временном контейнере.
 ```
 $ docker run --rm php:7-fpm php -i |grep extension_dir
 extension_dir => /usr/local/lib/php/extensions/no-debug-non-zts-20141001 => /usr/local/lib/php/extensions/no-debug-non-zts-20141001
@@ -66,40 +67,5 @@ $ docker run -v `pwd`/localetc:/usr/local/etc --name=php7 php:7-fpm php -i |grep
 Configuration File (php.ini) Path => /usr/local/etc/php
 Loaded Configuration File => /usr/local/etc/php/php.ini
 ```
-Так можно редактировать конфиги php в `localetc/` и пересоздавать контейнер.
-
-Для сравнения:
-```
-$ docker run --rm php:7-fpm php -i |grep Configuration
-Configuration File (php.ini) Path => /usr/local/etc/php
-Loaded Configuration File => (none)
-```
-Файла конифгурации нет.
-
-
-### Служба docker на удаленной машине
-
-Когда служба и клиент работают на разных машинах, у службы нет доступа к файловой системе клиентского приложения. Поэтому файлы конфигов надо копировать в контейнер.
-
-```
-~$ docker cp $PHP7:/usr/src/php/php.ini-development php.ini
-~$ vi php.ini
-~$ docker cp php.ini php7:/usr/local/etc/
-```
-Выполнить команду в незапущенном контейнере аналогично `docker run image command` нельзя.
-Поэтому я запускаю контейнер, приаттачив клиента докера к STDIN/STDOUT контейнера и отправляю в фон.
-Затем проверяю что php конфиг считывает:
-```
-~$ docker start -a php7 &
-[1] 10183
-[27-Aug-2015 14:56:26] NOTICE: fpm is running, pid 1
-[27-Aug-2015 14:56:26] NOTICE: ready to handle connections
-```
-Теперь можно проверить что php видит мой конфиг.
-```
-~$ docker exec php7 php -i |grep php.ini
-Configuration File (php.ini) Path => /usr/local/etc/php
-Loaded Configuration File => /usr/local/etc/php/php.ini
-```
-При желании можно отредактировать и заменить в контейнере конфиги fpm.
+Теперь можно редактировать конфиги php и fpm в `localetc/` и перезапускать контейнер.
 
