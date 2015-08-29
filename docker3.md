@@ -107,7 +107,8 @@ Rock'n'Roll!
 
 Осталось настроить обработку логов.
 
-Мейнтейнеры образа php решили радовать нас логами fpm в /proc/self/fd/2, он же STDERR - причем, как error_log, так и access.log. Не знаю зачем мне это счастье - лог всех обращений к fpm, поэтому предлагаю отредактировать localetc/php-fpm.conf и написать что-то привычное
+Мейнтейнеры образа php решили радовать нас логами fpm в /proc/self/fd/2, он же STDERR - причем, как error_log, так и access.log. Не знаю зачем мне это счастье - лог всех обращений к fpm, поэтому предлагаю отредактировать localetc/php-fpm.conf и написать что-то привычное:
+
 	error_log = /var/log/php/php-fpm.error.log
 	;access.log = /proc/self/fd/2 
 
