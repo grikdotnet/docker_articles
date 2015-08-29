@@ -112,7 +112,8 @@ Rock'n'Roll!
 	error_log = /var/log/php/php-fpm.error.log
 	;access.log = /proc/self/fd/2 
 
-В Nginx обошлись без самодеятельности, так что отается лишь включить access log в конфиге сайта в nginx/conf.d/site.ru.conf
+В Nginx обошлись без самодеятельности, так при желании можно включть access log в конфиге сайта nginx/conf.d/site.ru.conf
+
     access_log  /var/log/nginx/host.access.log  main;
 
 Теперь можно создать папку для логов c правом записи для демона docker и подмонтировать ее в контейнеры:
