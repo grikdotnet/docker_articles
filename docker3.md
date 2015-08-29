@@ -67,7 +67,7 @@ $ docker run -v `pwd`/localetc:/usr/local/etc --name=php7 php:7-fpm php -i |grep
 Configuration File (php.ini) Path => /usr/local/etc/php
 Loaded Configuration File => /usr/local/etc/php/php.ini
 ```
-Теперь можно запустить контейнер php7 с тестовым приложением на php в фоне.
+Теперь можно пересоздать контейнер php7 с тестовым приложением на php. Создатели образа не позаботились о том, чтобы php-fpm работал как демон, так что надо самим запускать его фоном, не освобождая стандартные каналы ввода-вывода.
 ```
 $ docker rm php7
 $ mkdir scripts
@@ -81,19 +81,18 @@ $ docker run -v `pwd`/localetc:/usr/local/etc \
 Пока что для удобства дебага я оставляю вывод из контейнера php-fpm в свою консоль.
 Когда будет надо, можно отредактировать конфиги php и fpm в `localetc/` и перезапускать контейнер.
 
-С Nginx все стандартно: в папке `nginx/` надо отредактировать nginx.conf, fastcgi_params по вкусу и создать конфигурационный файл для своего сайта в `nginx/conf.d/`.
-Основное для связи nginx с php - это указать в имени хоста имя контейнера с php.
-Директивы root и SCRIPT_FILENAME должны указывать на путь, который php поймет в своем контейнере php7.
+С Nginx все просто и стандартно. В папке `nginx/` надо отредактировать nginx.conf, fastcgi_params по вкусу, и создать конфигурационный файл для своего сайта в `nginx/conf.d/`.
+Основное для связи nginx с php - это указать в имени хоста имя контейнера с php, а директивы root и SCRIPT_FILENAME должны указывать на путь, который php поймет в своем контейнере php7.
 
     location ~ \.php$ {
         fastcgi_pass   php7:9000;
         fastcgi_param  SCRIPT_FILENAME  /scripts$fastcgi_script_name;
 
-Монтирую конфиги в контейнер nginx и запускаю с маппингом 80-го порта контейнера на локальный 8080.
+Монтирую конфиги в контейнер nginx и запускаю с маппингом 80-го порта контейнера на локальный 8080. 
 
 ```
 $ docker rm nginx
-$ docker run -v `pwd`/nginx:/etc/nginx -p 8080:80 --name=nginx nginx 
+$ docker run -v `pwd`/nginx:/etc/nginx -p 8080:80 --name=nginx nginx &
 $ curl 127.0.0.1:8080/test.php
 172.17.0.65 -  29/Aug/2015:15:50:29 +0000 "GET /test.php" 200
 Hello world!
