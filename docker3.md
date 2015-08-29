@@ -74,7 +74,7 @@ Loaded Configuration File => /usr/local/etc/php/php.ini
 ```
 $ docker rm php7
 $ mkdir scripts
-$ echo "<?php echo 'Hello world!'.PHP_EOL;" > scripts/test.php
+$ echo "<?php echo 'Hello world! ',PHP_VERSION,PHP_EOL;" > scripts/test.php
 $ docker run -v `pwd`/localetc:/usr/local/etc \
 	-v `pwd`/scripts:/scripts \
 	--name=php7 php:7-fpm &
@@ -99,7 +99,7 @@ $ docker rm nginx
 $ docker run -v `pwd`/nginx:/etc/nginx -p 8080:80 --name=nginx nginx &
 $ curl 127.0.0.1:8080/test.php
 172.17.0.65 -  29/Aug/2015:15:50:29 +0000 "GET /test.php" 200
-Hello world!
+Hello world! 7.0.0RC1
 ```
 Rock'n'Roll!
 
@@ -129,6 +129,7 @@ $ docker run -v `pwd`/nginx:/etc/nginx \
 	-v `pwd`/log:/var/log/nginx \
 	-p 8080:80 --name=nginx \
 	nginx &
+Hello world! 7.0.0RC1
 ```
 
 Когда надо, можно отредактировать конфиги php и fpm в `localetc/` и перезапускать контейнер.
