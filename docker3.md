@@ -5,7 +5,7 @@ Docker myths and receipts. Monkey patch
 
 ### Настройка локально
 
-В этой статье я предполагаю, что служба docker запущена на той же машине, на которой выполняются команды, и у процесса есть доступ на чтение к текущей папке.
+В этой статье я предполагаю, что служба docker запущена на той же машине, на которой выполняются команды, и у процесса есть доступ на чтение к текущей папке. Еще я подразумеваю, что вы умеете настроить связку PHP-FPM и Nginx.
 
 Беру образы Nginx и PHP 7.
 ```
@@ -24,7 +24,9 @@ Status: Downloaded newer image for php:7
 80be81b27e012fd061ff4b682f0b7b8803500bc38a4b9f787f91661603b2d4b7
 ```
 
-Для Nginx расположение конфигов стандартизировано. Где лежат конфиги для PHP можно увидеть в его [Dockerfile]((https://github.com/docker-library/php/blob/f5e091ac3815dce80ca496298e0cb94638844b10/7.0/fpm/Dockerfile)):
+### PHP
+
+Начну с PHP - его настроить сложнее. Где лежат конфиги для PHP можно увидеть в его [Dockerfile]((https://github.com/docker-library/php/blob/f5e091ac3815dce80ca496298e0cb94638844b10/7.0/fpm/Dockerfile)):
 ```
 	ENV PHP_INI_DIR /usr/local/etc/php
 	   --with-config-file-scan-dir="$PHP_INI_DIR/conf.d" \
@@ -59,6 +61,7 @@ opcache.so
 $ echo extension_dir = "/usr/local/lib/php/extensions/no-debug-non-zts-20141001" >>  localetc/php/php.ini
 $ echo zend_extension = opcache.so >> localetc/php/php.ini
 ```
+
 Пересоздаю контейнер php и монтирую в него папку с конифгами. Путь к монтируемой папке должен быть от корня - служба не знает из какой папки вызывается клент docker.
 ```
 $ docker rm php7
@@ -79,7 +82,8 @@ $ docker run -v `pwd`/localetc:/usr/local/etc \
 [29-Aug-2015 15:19:25] NOTICE: ready to handle connections
 ```
 Пока что для удобства дебага я оставляю вывод из контейнера php-fpm в свою консоль.
-Когда будет надо, можно отредактировать конфиги php и fpm в `localetc/` и перезапускать контейнер.
+
+### NGINX
 
 С Nginx все просто и стандартно. В папке `nginx/` надо отредактировать nginx.conf, fastcgi_params по вкусу, и создать конфигурационный файл для своего сайта в `nginx/conf.d/`.
 Основное для связи nginx с php - это указать в имени хоста имя контейнера с php, а директивы root и SCRIPT_FILENAME должны указывать на путь, который php поймет в своем контейнере php7.
@@ -99,3 +103,40 @@ Hello world!
 ```
 Rock'n'Roll!
 
+### Логи
+
+Осталось настроить обработку логов.
+
+Мейнтейнеры образа php решили радовать нас логами fpm в /proc/self/fd/2, он же STDERR - причем, как error_log, так и access.log. Не знаю зачем мне это счастье - лог всех обращений к fpm, поэтому предлагаю отредактировать localetc/php-fpm.conf и написать что-то привычное
+	error_log = /var/log/php/php-fpm.error.log
+	;access.log = /proc/self/fd/2 
+
+В Nginx обошлись без самодеятельности, так что отается лишь включить access log в конфиге сайта в nginx/conf.d/site.ru.conf
+    access_log  /var/log/nginx/host.access.log  main;
+
+Теперь можно создать папку для логов c правом для записи для демона docker и подмонтировать ее в контейнеры:
+```
+$ mkdir log
+$ sudo chgrp docker log
+$ docker stop nginx php7
+$ docker rm nginx php7
+$ docker run --name=php7 \
+	-v `pwd`/localetc:/usr/local/etc \
+	-v `pwd`/scripts:/scripts \
+	-v `pwd`/log:/var/log/php \
+	php:7-fpm &
+$ docker run -v `pwd`/nginx:/etc/nginx \
+	-v `pwd`/log:/var/log/nginx \
+	-p 8080:80 --name=nginx \
+	nginx &
+```
+
+Когда надо, можно отредактировать конфиги php и fpm в `localetc/` и перезапускать контейнер.
+```
+$ docker stop php7; docker start php7
+php7
+php7
+```
+
+
+Продолжение: то же самое, но удаленно. https://github.com/grikdotnet/docker_articles/blob/master/docker4.md

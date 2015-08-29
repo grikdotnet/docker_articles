@@ -1,10 +1,11 @@
 Docker myths and receipts. Херак-херак, и в production!
 ========
 
+
 В предыдущей серии: https://github.com/grikdotnet/docker_articles/blob/master/docker3.md
 было рассказано как легким движением руки запустить php в докере на локальной машине.
 
-Сейчас опишу еще один способ, как можно запустить php с nginx удаленно.
+Сейчас опишу способ, как можно сделать почти то же, но удаленно.
 
 Точно так же создаю контейнеры Nginx и PHP 7.
 ```
@@ -13,65 +14,6 @@ Docker myths and receipts. Херак-херак, и в production!
 ~$ docker create --name=nginx nginx
 80be81b27e012fd061ff4b682f0b7b8803500bc38a4b9f787f91661603b2d4b7
 ```
-
-Для Nginx расположение конфигов стандартизировано. Где лежат конфиги для PHP можно увидеть в его [Dockerfile]((https://github.com/docker-library/php/blob/f5e091ac3815dce80ca496298e0cb94638844b10/7.0/fpm/Dockerfile)):
-```
-	ENV PHP_INI_DIR /usr/local/etc/php
-	   --with-config-file-scan-dir="$PHP_INI_DIR/conf.d" \
-	WORKDIR /var/www/html
-	COPY php-fpm.conf /usr/local/etc/
-```
-### Настройка локально
-
-Пример ниже предполагает, что вы выполняете команды docker на той же системе, на которой работает служба Docker.
-```
-~$ mkdir monkeypatch
-~$ cd monkeypatch/
-$ docker cp php7:/usr/local/etc localetc
-$ docker cp nginx:/etc/nginx .
-$ ls localetc/
-pear.conf		php			php-fpm.conf		php-fpm.conf.default	php-fpm.d
-$ ls localetc/php
-conf.d
-```
-Мейнтейнеры образа положили в образ php-fpm.conf, но не удосужились положить дефолтный php.ini. Придется взять его из исходников php.
-
-	$ docker cp $PHP7:/usr/src/php/php.ini-development localetc/php/php.ini
-
-Правлю конфиги, как обычно. В какой папке PHP ищет расширения? Узнать придется у самого php.
-Посмотреть конфигурацию php можно, запустив его во временном контейнере.
-```
-$ docker run --rm php:7-fpm php -i |grep extension_dir
-extension_dir => /usr/local/lib/php/extensions/no-debug-non-zts-20141001 => /usr/local/lib/php/extensions/no-debug-non-zts-20141001
-$ docker run --rm php:7-fpm ls /usr/local/lib/php/extensions/no-debug-non-zts-20141001
-opcache.a
-opcache.so
-```
-В расширениях только опкеш, подключаю его. 
-```
-$ echo extension_dir = "/usr/local/lib/php/extensions/no-debug-non-zts-20141001" >>  localetc/php/php.ini
-$ echo zend_extension = opcache.so >> localetc/php/php.ini
-```
-Пересоздаю контейнер php и монтирую в него папку с конифгами. Путь к монтируемой папке должен быть от корня - служба не знает из какой папки вызывается клент docker.
-```
-$ docker rm php7
-php7
-$ docker run -v `pwd`/localetc:/usr/local/etc --name=php7 php:7-fpm php -i |grep Configuration
-Configuration File (php.ini) Path => /usr/local/etc/php
-Loaded Configuration File => /usr/local/etc/php/php.ini
-```
-Так можно редактировать конфиги php в `localetc/` и пересоздавать контейнер.
-
-Для сравнения:
-```
-$ docker run --rm php:7-fpm php -i |grep Configuration
-Configuration File (php.ini) Path => /usr/local/etc/php
-Loaded Configuration File => (none)
-```
-Файла конифгурации нет.
-
-
-### Служба docker на удаленной машине
 
 Когда служба и клиент работают на разных машинах, у службы нет доступа к файловой системе клиентского приложения. Поэтому файлы конфигов надо копировать в контейнер.
 
@@ -97,3 +39,4 @@ Loaded Configuration File => /usr/local/etc/php/php.ini
 ```
 При желании можно отредактировать и заменить в контейнере конфиги fpm.
 
+(tbc)
