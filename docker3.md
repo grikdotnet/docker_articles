@@ -15,7 +15,7 @@ Docker myths and receipts. Monkey patch
 Status: Downloaded newer image for php:7
 ```
 
-Теперь у меня есть два чужих класса обычного качества, которые надо связать вместе через инъекцию завиимостей. Самый простой способ инъектить зависимости в чужой код, конечно же, [monkeypatching](https://ru.wikipedia.org/wiki/Monkey_patch)!
+Теперь у меня есть два чужих класса обычного качества, которые надо связать вместе через инъекцию завиимостей. Самый простой способ добавлять зависимости в чужой код, конечно же, [monkeypatching](https://ru.wikipedia.org/wiki/Monkey_patch)!
 Сначала создаю контейнеры. Помню о [второй сложности программирования](http://martinfowler.com/bliki/TwoHardThings.html) - даю контейнерам вразумительные имена, они будут нужны чтобы контейнеры могли взаимодействовать между собой.
 ```
 ~$ docker create --name=php7 php:7-fpm
@@ -56,13 +56,13 @@ $ docker run --rm php:7-fpm ls /usr/local/lib/php/extensions/no-debug-non-zts-20
 opcache.a
 opcache.so
 ```
-В расширениях только опкеш, подключаю его. 
+В расширениях только opcache, подключаю его. 
 ```
 $ echo extension_dir = "/usr/local/lib/php/extensions/no-debug-non-zts-20141001" >>  localetc/php/php.ini
 $ echo zend_extension = opcache.so >> localetc/php/php.ini
 ```
 
-Пересоздаю контейнер php и монтирую в него папку с конифгами. Путь к монтируемой папке должен быть от корня - служба не знает из какой папки вызывается клент docker.
+Пересоздаю контейнер php и монтирую в него папку с конифгами. Путь к монтируемой папке должен быть от корня - служба не знает из какой папки вызывается клиент docker.
 ```
 $ docker rm php7
 php7
