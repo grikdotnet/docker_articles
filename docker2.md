@@ -1,4 +1,4 @@
-Docker myths and receipts. Semi-automatic leg-homing gun
+Docker myths and recipes. Semi-automatic leg-homing gun
 ========
 
 Начало: https://github.com/grikdotnet/docker_articles/blob/master/docker1.md

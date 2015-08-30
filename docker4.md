@@ -1,4 +1,4 @@
-Docker myths and receipts. Херак-херак, и в production!
+Docker myths and recipes. Херак-херак, и в production!
 ========
 
 

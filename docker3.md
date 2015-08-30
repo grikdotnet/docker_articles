@@ -1,4 +1,4 @@
-Docker myths and receipts. Monkey patch
+Docker myths and recipes. Monkey patch
 ========
 
 Начало: https://github.com/grikdotnet/docker_articles/blob/master/docker1.md
