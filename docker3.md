@@ -139,11 +139,11 @@ $ curl 127.0.0.1:8080/test.php
 Hello world! 7.0.0RC1
 ```
 
-Когда надо, можно отредактировать конфиги php, fpm и nginx, и перезапускать php.
+Когда надо поменять конфигурацию, можно их отредактировать и дать команду перезагрузки php и nginx.
 ```
 $ docker exec php7 pkill -o -USR2 php-fpm
-$ docker exec nginx service nginx restart
-Restarting nginx: nginx
+$ docker exec nginx service nginx reload
+Reloading nginx: nginx.
 ```
 Надеюсь, когда-нибудь для официального образа php напишут init-скрипт. При желании, можно добавить его самостоятельно из дистрибутива по выбору.
 
