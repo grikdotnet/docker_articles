@@ -20,7 +20,7 @@ $ docker run -d -p 8080:80 --name=nginx nginx
 $ docker cp "php7:/usr/src/php/php.ini-development" php.ini
 $ vi php.ini
 $ docker cp php.ini "php7:/usr/local/etc/php/"
-$ docker exec php7.2 pkill -o -USR2 php-fpm
+$ docker exec php7 pkill -o -USR2 php-fpm
 
 $ echo "<?php echo 'Hello cruel world! ',PHP_VERSION,PHP_EOL;" >test2.php
 $ docker exec php7 mkdir /scripts
