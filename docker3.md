@@ -145,7 +145,7 @@ $ docker exec php7 pkill -o -USR2 php-fpm
 $ docker exec nginx service nginx reload
 Reloading nginx: nginx.
 ```
-Надеюсь, когда-нибудь для официального образа php напишут init-скрипт. При желании, можно добавить его самостоятельно из дистрибутива по выбору.
+Когда-нибудь в официальном образе php появится init-скрипт. При желании, можно добавить его самостоятельно из дистрибутива по выбору.
 
 Продолжение: https://github.com/grikdotnet/docker_articles/blob/master/docker4.md
 
