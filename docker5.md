@@ -1,9 +1,79 @@
 Docker myths and recipes. MySQL 
 ========
-
 *незаконченная статья*
 
-Подключить MySQL в связке с php достаточно просто, как это сделать - хорошо описано в документации к образу [MySQL](https://hub.docker.com/r/mysql/mysql-server/), который предоставляет Oracle.
+Начало: https://github.com/grikdotnet/docker_articles/blob/master/docker1.md
+
+В этой статье я опишу как можно работать с mysql в docker чтобы команде было удобно.
+Основные алгоритмы хорошо описаны в документации к образу [MySQL](https://hub.docker.com/r/mysql/mysql-server/), который предоставляет Oracle.
+
+У меня в работе достаточно крупная база данных. Работать с базой большого объема локально разработчикам неудобно, поэтому я создал урезанную версию небольшого размера со структурой, но с частью данных, достаточной для процесса разработки.
+А на рабочем сервере я хочу хранить файлы базы в удобном каталоге и работать с базой из командной строки через сокет.
+
+Поэтому для файлов базы данных я буду использовать так называемый Data Volume сontainer, который у меня ассоциациируется с data transfer object.
+
+****
+Скачиваю образ MySQL, запускаю во временном контейнере, беру из него конфиг и редактирую:
+```console
+$ docker run --rm mysql/mysql-server cat /etc/my.cnf > my.cnf
+$ vi my.cnf
+	--log-error=/var/log/mysqld.log
+	++log-error=/var/log/mysql/mysqld.log
+```
+Конечно, стоит настроить и все нужные параметры. Я перемещаю лог, чтобы он писался в подмонтированную папку, и можно было посмотреть его без открытия консоли в контейнере. MySQL открывает лог не под рутом, а под mysql, так что надо решить проблему сохранения аттрибутов монтированных каталогов в контейнере, описанную в первой статье.
+
+Я создаю свой контейнер на базе пустого образа, который называется "scratch".
+Если я создам его из образа базы данных, как предлагают в [документации](https://docs.docker.com/userguide/dockervolumes/#creating-and-mounting-a-data-volume-container), при экспорте в архив пойдет вся операционная система, и размер файла составит порядка 500 мегабайт. Раздавать дамп такого размера неудобно. Лучше я создам контейнер, в котором будут только файлы базы данных.
+К сожалению, создать пустой контейнер напрямую нельзя, сначала надо отнаследоваться от scratch и создать пустой образ.
+```console
+$ mkdir data_volume
+$ cd data_volume/
+$ echo "FROM scratch">Dockerfile
+$ echo "CMD true">>Dockerfile
+$ docker build -t grikdotnet/data_volume .
+$ cd ..; rm -rf data_volume/
+```
+Совсем пустой образ Docker создать не разрешает, а с LABEL или CMD - можно.
+
+Создаю группу docker и обавляю в нее mysql.
+```console
+
+```
+Создаю и подключаю data volume для файлов базы данных, а так же общую папку логов, которую я создавал при написании прошлой статьи.
+```console
+$ docker create -v /var/lib/mysql --name mysql_data grikdotnet/data_volume
+$ docker create -d --name mysql --volumes-from mysql_data \
+    -v "$(pwd)/log:/var/log/mysql" \
+    -v "$(pwd)/my.cnf:/etc/my.cnf" \
+    -e MYSQL_ROOT_PASSWORD=my_password mysql/mysql-server
+01effb0bb481d06dc1642a4f18950224049900971d972beea2a6ab311bd60ceb
+$
+$ docker inspect mysql_data |grep Source
+            "Source": "/mnt/sda1/var/lib/docker/volumes/1b1870f9e7...81989db3eb72/_data",
+```
+Создаю в контейнере базу из дампа моего приложения.
+```
+$ cat dump.sql  | docker exec -i mysql mysql -B
+```
+Теперь я могу экспортировать контейнер чтобы раздавать его в команде.
+```
+$ docker export mysql_data >mysql_data.dc.tar
+```
+
+
+Можно подключиться к mysql прямо по сокету в data volume container.
+```console
+$ sudo mysql -S /var/lib/docker/volumes/1b1870f9e7...81989db3eb72/_data/mysql.sock -pmy_password
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Server version: 5.6.26 MySQL Community Server (GPL)
+...
+mysql> \q
+Bye
+```
+
+**Подключение PHP**
+
+Подключить MySQL в связке с php достаточно просто.
 
 Сначала добавляю расширение pdo_mysql [как рекомендуют авторы образа php](https://github.com/docker-library/docs/blob/master/php/README.md):
 
@@ -20,48 +90,5 @@ $ docker run -d --name=php7 \
 	-v "$(pwd)/scripts:/scripts" \
 	-v "$(pwd)/log:/var/log/php" \
 	grikdotnet/php-pdo_mysql
-```
-
-Скачиваю образ MySQL, запускаю во временном контейнере и беру из него конфиг:
-```console
-$ docker run --rm mysql/mysql-server cat /etc/my.cnf > my.cnf
-$ vi my.cnf
-	--log-error=/var/log/mysqld.log
-	++log-error=/var/log/mysql/mysqld.log
-	--socket=/var/lib/mysql/mysql.sock
-	++socket=/var/run/mysql.sock
-```
-
-Я хочу выделить данные из приложения с контейнером Mysql. Хочу подготовить для разработчиков контейнер базы данных со структурой и частью данных небольшого размера, который они могут скачать и запустить у себя. На рабочем сервере лучше хранить файлы базы в удобном для меня каталоге, а не в хранилище docker. Для этого я создаю так называемый Data Volume сontainer. Затем я хочу этот контейнер наполнить базой данных, экспортировать и передать другим разработчикам в команде. Чтобы не экоспортировать всю операционную систему, я создаю свой data transfer object на базе пустого образа, который называется "scratch".
-К сожалению, создать пустой контейнер напрямую нельзя, сначала надо отнаследоваться от scratch и создать пустой образ.
-```console
-$ mkdir data_volume
-$ cd data_volume/
-$ echo "FROM scratch">Dockerfile
-$ echo "CMD true">>Dockerfile
-$ docker build -t grikdotnet/data_volume .
-$ cd ..; rm -rf data_volume/
-```
-Совсем пустой образ Docker создать не разрешает, а с LABEL - можно.
-
-Создаю и подключаю data volume для файлов базы данных, а так же общую папку логов.
-```console
-$ docker create -v /var/lib/mysql --name mysql_data grikdotnet/data_volumes
-$ docker run -d --name mysql --volumes-from mysql_data -v "$(pwd)/log:/var/log/mysql" -v "$(pwd)/my.cnf:/etc/my.cnf" -e MYSQL_ROOT_PASSWORD=my_password mysql/mysql-server
-01effb0bb481d06dc1642a4f18950224049900971d972beea2a6ab311bd60ceb
-$ docker inspect mysql_data |grep Source
-            "Source": "/mnt/sda1/var/lib/docker/volumes/1b1870f9e7...81989db3eb72/_data",
-$ sudo ls /mnt/sda1/var/lib/docker/volumes/1b1870f9e7...81989db3eb72/_data
-auto.cnf            ib_logfile1         mysql               test
-ib_logfile0         ibdata1             performance_schema
-
-$ cat dump.sql  | docker exec -i mysql mysql -B
-$ echo "show databases" | docker exec -i mysql mysql
-	Database
-	information_schema
-	my_database
-	mysql
-	performance_schema
-	test
 ```
 

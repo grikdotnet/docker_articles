@@ -41,9 +41,11 @@ Mem:           976M         85M        100M         12M        790M        677M
 Swap:          1.0G        1.0M        1.0G
 
 ```
-То же ядро, та же память, а дистрибутив и файловая система - разные.
 
 Docker - это не chroot, их функционал частично совпадает. Это не система безопасности вроде AppArmor. Docker использует те же контейнеры, что и LXC, но интересен он не контейнерами. Docker - это ничего из того, что я думал о нем до того, как прочитал документацию.
+
+То же ядро, память, файловая система, а дистрибутивы, библиотеки и пользователи - разные.
+У этого есть важное следствие: когда мы монтируем папку в контейнер, у нее остаются системные uid/gid, а в контейнерах - собственные пользователи со своими uid/gid, и соотносятся они совершенно непредсказуемо.
 
 **Docker - это инструмент объекто-ориентированного проектирования.**
 
@@ -74,15 +76,8 @@ Docker дает инкапсуляцию, наследование и полим
 docker@dev:~$ docker pull nginx
 latest: Pulling from nginx
 aface2a79f55: Pull complete
-5dd2638d10a1: Pull complete
-97df1ddba09e: Pull complete
-e7e7a55e9264: Pull complete
 72b67c8ad0ca: Downloading [=============>                                     ] 883.6 kB/3.386 MB
 9108e25be489: Download complete
-6dda3f3a8c05: Download complete
-42d2189f6cbe: Download complete
-3cb7f49c6bc4: Download complete
-a486da044a3f: Download complete
 902b87aaaec9: Already exists
 9a61b6b1315e: Already exists
 ```
