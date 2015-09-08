@@ -76,4 +76,21 @@ $ docker run -d --name=php7 \
 	php:7-fpm >>log/docker.php.log 2>&1
 ```
 
+Этот образ удобно экспортировать
+```
+~$ docker save grikdotnet/application | xz > application.dc.tar.xz
+$ ls -lh application.dc.tar.xz
+-rw-rw-r-- 1 gri gri 858K Sep  8 14:53 application.dc.tar.xz
+```
+и импортировать
+```
+$ docker rm application
+$ docker rmi grikdotnet/application
+$ cat application.dc.tar.xz | docker import - grikdotnet/application
+gri@ubuntu:~$ docker images
+REPOSITORY               TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
+grikdotnet/application   latest              cfdcb70892b0        4 seconds ago       2.659 MB
+...
+```
 
+Осталось настроить права доступа.
