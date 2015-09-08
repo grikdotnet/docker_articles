@@ -145,7 +145,9 @@ $ docker exec php7 pkill -o -USR2 php-fpm
 $ docker exec nginx service nginx reload
 Reloading nginx: nginx.
 ```
-Когда-нибудь в официальном образе php появится init-скрипт. При желании, можно добавить его самостоятельно из дистрибутива по выбору.
+Когда php 7 будет включен в дистрибутив Debian в образе php:7 появится init-скрипт. При желании, можно добавить его самостоятельно из дистрибутива по выбору.
+
+В docker версии 1.7 сетевой адрес в виде имени другого контейнера не резолвился, для этого нужно добавлять в `docker run` опцию `--link php7`
 
 Продолжение: https://github.com/grikdotnet/docker_articles/blob/master/docker4.md
 
