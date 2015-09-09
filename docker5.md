@@ -1,6 +1,5 @@
 Docker myths and recipes. Data Volume container.
 ========
-*незаконченная статья*
 
 Начало: https://github.com/grikdotnet/docker_articles/blob/master/docker1.md
 
@@ -18,7 +17,6 @@ Docker myths and recipes. Data Volume container.
 * При подключении в контейнер внешнего каталога у него остаются uid/gid host-системы.
 
 После удаления контейнеров разобраться к чему относятся тома в /var/lib/docker/volumes/ достаточно сложно. Это может привести к замусориванию и потере места на диске. Удобнее прямо указывать какие каталоги надо монтировать, чтобы можно было просматривать их содержимое и удалять когда они станут не нужны.
-Другая проблема - в контейнерах обычно есть свои пользователи и группы со своими uid/gid. Как будут соотноситься пользователи в контейнере и gid/uid монтируемых каталогов - предсказать невозможно.
 
 Перефразируя фильм "Адвокат дьявола", авторы docker дают нам тома в контейнерах, дарят этот экстраординарный подарок, а потом для своего ролика космических трюков устанавливает противоположные правила игры.
 Расшаривай каталог между контейнерами - но будет сложно удалить. Монтируй свою папку и удаляй ее когда надо - но не распространяй в образе. Записывай файлы в образ и распространяй его - но не расшаривай между контейнерами!
@@ -27,6 +25,24 @@ Docker myths and recipes. Data Volume container.
 
 В документации предлагают создавать volume container из образа операционной системы или базы данных.
 Если такой контейнер экспортировать, в файл пойдет вся операционная система. Наследование от образа mysql добавит к размеру архива порядка 66 мегабайт при сжатии xz. Чтобы этого избежать, я создаю контейнер от [Busybox](https://hub.docker.com/r/library/busybox/) - он позволяет выполнять простые команды и открывать терминал в контейнере, при этом добавляет в архив менее мегабайта.
+
+
+**UID/GID и Data Volume**
+
+В контейнерах обычно есть свои пользователи и группы со своими uid/gid, а значения uid/gid монтируемых каталогов сохраняется.
+Как будут соотноситься пользователи в контейнере и gid/uid монтируемых каталогов - предсказать невозможно.
+Скорее всего, у вас возникнут проблемы с правами доступа к разделяемому тому.
+
+Чтобы решить эту проблему, можно создать специальную группу в системе и в контейнерах.
+К сожалению, у группы docker, которая создатся в host-системе, gid равен 999, и совпадение с ним в сторонних контейнерах весьма вероятно.
+Например, в образе mysql-server группа с gid 999 называется ssl.
+Создам отдельную группу для томов и добавлю себя в нее для удобства доступа.
+
+```console
+$ sudo groupadd -g 56789 docker_volumes
+$ sudo usermod -a -G docker_volumes gri
+```
+
 
 **Подготовка образа с приложением**
 
@@ -39,6 +55,7 @@ Docker myths and recipes. Data Volume container.
 Копирую скрипты приложения в каталоге `source` и готовлю образ со скриптами:
 ```console
 $ mkdir data_volume
+$ sudo chgr
 $ cd data_volume/
 $ cp ~/app source
 $ vi Dockerfile
@@ -48,38 +65,30 @@ $ vi Dockerfile
 ```Dockerfile
 FROM busybox
 VOLUME /scripts
+RUN adduser -D -u 56789 docker_volumes
 COPY source /source/
+USER docker_volumes
 CMD test "$(ls -A "/scripts/" 2>/dev/null)" || cp /source/* /scripts/
 ```
-При создании контейнера выполнится команда из CMD. Если каталог `application/` пустой, в него будут скопированы скрипты приложения.
+При запуске контейнера будет выполнятся команда из CMD. Если каталог `application/` пустой, в него будут скопированы скрипты приложения.
+Если при запуске контейнера указать команду, директива CMD игнорируется, поэтому я не использую ENTRYPOINT чтобы удобней дебажить, открыв консоль в контейнер.
 
-Создаю образ и контейнер с приложением:
+Создаю образ и контейнер:
 ```
 $ docker build -t grikdotnet/application .
 $ cd ..
 $ mkdir application
+$ sudo chgrp docker_volumes application
 $ docker run --name application -v "$(pwd)/application:/scripts" grikdotnet/application
 ```
-Теперь у меня есть образ grikdotnet/application с приложением и контейнер с data volume `/scripts/`,
-в который монтирован мой каталог ./application/. При первом запуске контейнера в каталог application/ копируются файлы приложения из образа.
-Если при создании контейнера application каталог scripts/ будет не пустой, приложение в него скопировано не будет.
-Так что я могу редактировать скрипты и пересоздавать volume container по желанию.
+Теперь у меня есть контейнер с data volume `/scripts/`, в который монтирован мой каталог `./application/`, и в нем появилось мое приложение.
+Если при создании контейнера application каталог scripts/ будет не пустой, так что правки я не потеряю.
 Этот data volume я могу подмонтировать в контейнер php.
 
-Чтобы при запуске контейнера с консолью не выполнялась команда копирования файлов я использую директиву CMD, а не ENTRYPOINT.
-
-Подключение к контейнеру php:
-```
-$ docker run -d --name=php7 \
-	-v "$(pwd)/localetc:/usr/local/etc" \
-	--volumes-from application/
-	-v "$(pwd)/log:/var/log/php" \
-	php:7-fpm >>log/docker.php.log 2>&1
-```
 
 Этот образ удобно экспортировать
 ```
-~$ docker save grikdotnet/application | xz > application.dc.tar.xz
+~$ docker save grikdotnet/application | xz > application.image.tar.xz
 $ ls -lh application.dc.tar.xz
 -rw-rw-r-- 1 gri gri 858K Sep  8 14:53 application.dc.tar.xz
 ```
@@ -88,13 +97,22 @@ $ ls -lh application.dc.tar.xz
 $ docker rm application
 $ docker rmi grikdotnet/application
 $ rm -rf application/*
-$ docker load --input application.dc.tar.xz
-$ docker images
-REPOSITORY               TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
-grikdotnet/application   latest              cfdcb70892b0        4 seconds ago       2.433 MB
+$ docker load --input application.image.tar.xz
 $ docker run --name application -v "$(pwd)/application:/scripts" grikdotnet/application
-$ ls application
-test.php
+$ ls -Al application
+total 4
+-rw-r--r-- 1 56789 docker_volumes 28 Sep  9 09:22 test.php
+```
+Да, пользователя с gid 56789 в host-системе нет.
+
+
+Подключение к контейнеру php выполняется параметром `--volumes-from`:
+```
+$ docker run -d --name=php7 \
+	-v "$(pwd)/localetc:/usr/local/etc" \
+	--volumes-from application/
+	-v "$(pwd)/log:/var/log/php" \
+	php:7-fpm >>log/docker.php.log 2>&1
 ```
 
-Осталось настроить права доступа.
+Продолжение следует.
