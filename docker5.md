@@ -105,8 +105,7 @@ total 4
 ```
 Да, пользователя с gid 56789 в host-системе нет.
 
-
-Подключение к контейнеру php выполняется параметром `--volumes-from`:
+Подключение к [контейнеру php](https://github.com/grikdotnet/docker_articles/blob/master/docker3.md) выполняется параметром `--volumes-from`:
 ```
 $ docker run -d --name=php7 \
 	-v "$(pwd)/localetc:/usr/local/etc" \
@@ -114,5 +113,6 @@ $ docker run -d --name=php7 \
 	-v "$(pwd)/log:/var/log/php" \
 	php:7-fpm >>log/docker.php.log 2>&1
 ```
+Конечно, в образ PHP тоже стоит добавить пользователя 56789 docker_volumes.
 
 Продолжение следует.
