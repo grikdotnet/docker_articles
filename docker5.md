@@ -87,11 +87,14 @@ $ ls -lh application.dc.tar.xz
 ```
 $ docker rm application
 $ docker rmi grikdotnet/application
-$ cat application.dc.tar.xz | docker import - grikdotnet/application
-gri@ubuntu:~$ docker images
+$ rm -rf application/*
+$ docker load --input application.dc.tar.xz
+$ docker images
 REPOSITORY               TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
-grikdotnet/application   latest              cfdcb70892b0        4 seconds ago       2.659 MB
-...
+grikdotnet/application   latest              cfdcb70892b0        4 seconds ago       2.433 MB
+$ docker run --name application -v "$(pwd)/application:/scripts" grikdotnet/application
+$ ls application
+test.php
 ```
 
 Осталось настроить права доступа.
