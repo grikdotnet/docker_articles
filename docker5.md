@@ -55,7 +55,7 @@ $ sudo usermod -a -G docker_volumes gri
 Копирую скрипты приложения в каталоге `source` и готовлю образ со скриптами:
 ```console
 $ mkdir data_volume
-$ sudo chgr
+$ chgrp docker data_volume
 $ cd data_volume/
 $ cp ~/app source
 $ vi Dockerfile
