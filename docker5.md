@@ -102,17 +102,9 @@ total 4
 ```
 Да, пользователя с gid 56789 в host-системе нет.
 
-Подключение к [контейнеру php](https://github.com/grikdotnet/docker_articles/blob/master/docker3.md) выполняется параметром `--volumes-from`:
-```
-$ docker run -d --name=php7 \
-	-v "$(pwd)/localetc:/usr/local/etc" \
-	--volumes-from application/
-	-v "$(pwd)/log:/var/log/php" \
-	php:7-fpm >>log/docker.php.log 2>&1
-```
-Конечно, PHP тоже может исполняться под пользователем docker_volumes.
+Конечно, PHP/Python/etc тоже могут исполняться под пользователем docker_volumes.
 
-Для этого надо расширить образ PHP, используя Dockerfile, подобный такому:
+В случае PHP для этого надо расширить официальный образ, используя Dockerfile, подобный такому:
 ```Dockerfile
 FROM php:5.6-fpm
 RUN adduser --group --system --uid 56789 --disabled-password docker_volumes
@@ -126,6 +118,13 @@ CMD ["php-fpm"]
 	user = docker_volumes
 	group = docker_volumes
 
-Пошаговые инструкции по запуску php можно найти в третьей части.
+Подключение приложения к контейнеру с PHP выполняется параметром `--volumes-from`.
+```
+$ docker run -d --name=php56 \
+	--volumes-from application/
+	my_php_image >>log/docker.php.log 2>&1
+```
+
+Пошаговые инструкции по запуску php можно найти в [третьей части](https://github.com/grikdotnet/docker_articles/blob/master/docker3.md).
 
 Продолжение следует.
