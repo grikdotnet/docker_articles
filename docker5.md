@@ -125,6 +125,7 @@ RUN apt-get update && apt-get install -y \
 CMD ["php-fpm"]
 ```
 и в подключаемом php-fpm.conf указать
+
 	user = docker_volumes
 	group = docker_volumes
 
