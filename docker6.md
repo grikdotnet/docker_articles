@@ -14,6 +14,10 @@ Docker myths and recipes. Portable database.
 Эту базу я хочу раздавать в виде образа и запускать работающий сервер БД одной командой.
 На рабочем сервере я хочу хранить файлы базы в удобном каталоге и работать с базой из командной строки через сокет.
 
+**UID/GID в разных образах**
+В так называемом "официальном" образе mysql (и mariadb) у пользователя mysql логичное для docker значение 999:999 в /etc/passwd. В другом официальном образе mysql-server, который предоставляет Oracle, у пользователя mysql стандартный для red-hat uid 27 - и это удобно для доступа к файлам базы утилитами из host-системы. В то же время, в Ubuntu нет стандартного значения uid/gid для mysql.
+Выбирайте себе официальный образ по вкусу. Я для примера взял mysql/mysql-server.
+
 **Запускаю локально**
 
 Скачиваю образ MySQL, запускаю во временном контейнере, беру из него конфиг и редактирую:
@@ -40,28 +44,40 @@ $ docker run -d --name mysql \
 ```
 $ cat dump.sql  | docker exec -i mysql mysql -B
 ```
-Если клиент mysql установлен локально, можно подключиться к серверу в контейнере через сокет:
+Если клиент mysql установлен локально, можно подключиться к серверу в контейнере через сокет в монтированном каталоге:
 ```
-$ mysql -S mysql_data/mysql.sock -p
+$ mysql -S ~/mysql_data/mysql.sock -p
+$ mysqldump -S ~/mysql_data/mysql.sock test -uroot -p > dump.sql
 ```
 
 Теперь у меня есть работающий сервер, в котором данные, конфиг и логи пишутся в мои локальные каталоги.
 
+
 **Готовлю образ c файлами базы данных для раздачи**
 
-Создаю образ для Data Volume.
-
-Docker-файл:
-```Dockerfile
+Создаю образ для Data Volume. Готовлю дамп базы данных.
+```console
+~$ mkdir data_volume
+~$ cd data_volume
+~/data_volume$ cp ../my.cnf .
+~/data_volume$ sudo cp -R ../mysql_data/ source
+~/data_volume$ sudo chown -R gri source/
+~/data_volume$ rm source/mysql.sock source/ib_logfile*
+```
+Лог innodb и socket не нужны - они пересоздаются при запуске. Создаю изображение.
+```console
+~/data_volume$ cat <<EOF > Dockerfile
 FROM busybox
-VOLUME /var/lib/mysql
+COPY my.cnf /etc/my.cnf
+VOLUME /etc/my.cnf /var/lib/mysql
 RUN adduser -D -u 56789 docker_volumes
 COPY source/* /var/lib/mysql/
 USER docker_volumes
 CMD test "$(ls -A "/var/lib/mysql/" 2>/dev/null)" || cp /source/* /var/lib/mysql/
-```
+EOF
 
-```
+~/data_volume$ docker build --rm -t mysql_data
+
 $ docker run -d --name mysql --volumes-from mysql_data \
     -v "$(pwd)/log/mysqld.log:/var/log/mysqld.log" \
     -v "$(pwd)/my.cnf:/etc/my.cnf" \
