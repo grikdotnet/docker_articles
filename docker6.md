@@ -3,7 +3,7 @@ Docker myths and recipes. Portable database.
 
 Начало: https://github.com/grikdotnet/docker_articles/blob/master/docker1.md
 
-В этой статье я опишу свой способ работать с mysql в docker - так, чтобы команде разработчиков было удобно.
+В этой статье я опишу свое исследование работы с mysql в docker - попытку сделать так, чтобы команде разработчиков было удобно.
 Основные алгоритмы хорошо описаны в документации к образу [MySQL](https://hub.docker.com/r/mysql/mysql-server/), который предоставляет Oracle.
 С PostgreSQL можно работать точно так же.
 
@@ -44,67 +44,34 @@ $ docker run -d --name mysql \
 ```
 $ cat dump.sql  | docker exec -i mysql mysql -B
 ```
-Если клиент mysql установлен локально, можно подключиться к серверу в контейнере через сокет в монтированном каталоге:
+Можно подключиться к серверу в контейнере через сокет в монтированном каталоге:
 ```
-$ mysql -S ~/mysql_data/mysql.sock -p
-$ mysqldump -S ~/mysql_data/mysql.sock test -uroot -p > dump.sql
-```
-
-Теперь у меня есть работающий сервер, в котором данные, конфиг и логи пишутся в мои локальные каталоги.
-
-
-**Готовлю образ c файлами базы данных для раздачи**
-
-Создаю образ для Data Volume. Готовлю дамп базы данных.
-```console
-~$ mkdir data_volume
-~$ cd data_volume
-~/data_volume$ cp ../my.cnf .
-~/data_volume$ sudo cp -R ../mysql_data/ source
-~/data_volume$ sudo chown -R gri source/
-~/data_volume$ rm source/mysql.sock source/ib_logfile*
-```
-Лог innodb и socket не нужны - они пересоздаются при запуске. Создаю изображение.
-```console
-~/data_volume$ cat <<EOF > Dockerfile
-FROM busybox
-COPY my.cnf /etc/my.cnf
-VOLUME /etc/my.cnf /var/lib/mysql
-RUN adduser -D -u 56789 docker_volumes
-COPY source/* /var/lib/mysql/
-USER docker_volumes
-CMD test "$(ls -A "/var/lib/mysql/" 2>/dev/null)" || cp /source/* /var/lib/mysql/
-EOF
-
-~/data_volume$ docker build --rm -t mysql_data
-
-$ docker run -d --name mysql --volumes-from mysql_data \
-    -v "$(pwd)/log/mysqld.log:/var/log/mysqld.log" \
-    -v "$(pwd)/my.cnf:/etc/my.cnf" \
-    -e MYSQL_ROOT_PASSWORD=my_password mysql/mysql-server
-01effb0bb481d06dc1642a4f18950224049900971d972beea2a6ab311bd60ceb
-
-```
-
-```
-$ docker export mysql_data |xz mysql_data.dc.tar
-```
-Раздаю полученный mysql_data.dc.tar.xz
-Импортировать контейнер так же просто:
-```
-$ docker export mysql_data |xz mysql_data.dc.tar
-```
-
-
-Можно подключиться к mysql прямо по сокету в data volume container.
-```console
-$ mysql -S /var/lib/docker/volumes/1b1870f9e7...81989db3eb72/_data/mysql.sock -pmy_password
+$ mysql -S ./mysql_data/mysql.sock -p
 Welcome to the MySQL monitor.  Commands end with ; or \g.
 Server version: 5.6.26 MySQL Community Server (GPL)
 ...
 mysql> \q
 Bye
+
+$ mysqldump -S ./mysql_data/mysql.sock test -uroot -p > dump.sql
 ```
+
+Теперь у меня есть работающий сервер, в котором мои данные, конфиг и логи лежат в моих каталогах, отдельно от сторонней, неконтролируемой, но изолированной в контейнере [среды исполнения](https://ru.wikipedia.org/wiki/Среда_выполнения) самой СУБД.
+
+**Образ с дампом базы данных**
+
+Рабочие файлы СУБД занимают намного больше места, чем текстовый дамп, они не переносимы между версиями и деривативами, такими как MariaDB и Percona. Базу данных удобно передавать в виде сжатого текстового дампа. 
+
+Я хочу создать и раздавать компактный образ с дампом базы, без полновесной операционной системы и самой СУБД.
+В контейнер СУБД, в каталог /var/lib/mysql я хочу монтировать свой локальный каталог.
+При первом запуске базы я хочу автоматически инициализировать базу данных дампом из контейнера, а если база уже существует - ее надо оставить.
+По всей видимости, мне нужен дополнительный слой абстракции, который позволит вызвать команду mysql извне контейнера mysql чтобы передать ему на вход дамп из другого контейнера.
+
+Здесь я упираюсь в ограничения возможностей docker. Утилита compose, которая создана для объединения контейнеров, не предоставляет возможности автоматически вызвать команду инициализации контейнера, не встраивая ее в образ. Можно встроить скрипт инициализации в собственный образ, унаследованный от официального, однако есть одна проблема - в образе MySQL (уже есть)[https://github.com/docker-library/mysql/blob/master/5.6/docker-entrypoint.sh] скрипт инициализации. Редактировать его очень не хочется - будут сложности с обновлением и сменой движка базы на конкурирующие версии, ведь моя цель в том, чтобы уйти от vendor lock in, менять oracle на mariadb, заменой одной строки в конфиге.
+
+Надеюсь, что когда-нибудь разработчики docker compose реализуют возможность указывать команды, которые надо запускать в контейнере при инициализации. Пока что придется создать отдельный контейнер для инициализации с клиентским модулем mysql на базе [Alpine Linux](https://hub.docker.com/_/alpine/). К счастью, экспортировать его не придется, достаточно одного Dockerfile с командами.
+
+
 
 **Подключение PHP**
 
