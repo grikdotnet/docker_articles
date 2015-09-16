@@ -44,6 +44,8 @@ $ docker run -d --name mysql \
 ```
 $ cat dump.sql  | docker exec -i mysql mysql -B
 ```
+Этот дамп должен быть создан командой `mysqldump --databases db_name` чтобы в нем были инструкции `create database` и `use databsase`.
+
 Можно подключиться к серверу в контейнере через сокет в монтированном каталоге:
 ```
 $ mysql -S ./mysql_data/mysql.sock -uroot -p
@@ -54,6 +56,10 @@ mysql> \q
 Bye
 
 $ mysqldump -S ./mysql_data/mysql.sock test -uroot -p > dump.sql
+```
+Через контейнер дамп базы делается так:
+```
+$ docker exec -i mysql mysqldump -p --databases db_name >dump.sql
 ```
 
 Теперь у меня есть работающий сервер, в котором мои данные, конфиг и логи лежат в моих каталогах, отдельно от сторонней, неконтролируемой, но изолированной в контейнере [среды исполнения](https://ru.wikipedia.org/wiki/Среда_выполнения) самой СУБД.
@@ -67,24 +73,28 @@ $ mysqldump -S ./mysql_data/mysql.sock test -uroot -p > dump.sql
 При первом запуске базы я хочу автоматически инициализировать базу данных дампом из контейнера, а если база уже существует - ее надо оставить.
 По всей видимости, мне нужен дополнительный слой абстракции, который позволит вызвать команду mysql извне контейнера mysql чтобы передать ему на вход дамп из другого контейнера.
 
-Здесь я упираюсь в ограничения возможностей docker. Утилита compose, которая создана для объединения контейнеров, не предоставляет возможности автоматически вызвать команду инициализации контейнера, не встраивая ее в образ. Можно встроить скрипт инициализации в собственный образ, унаследованный от официального, однако есть одна проблема - в образе MySQL [уже есть](https://github.com/docker-library/mysql/blob/master/5.6/docker-entrypoint.sh) скрипт инициализации. Редактировать его очень не хочется - будут сложности с обновлением и сменой движка базы на конкурирующие версии, ведь моя цель в том, чтобы уйти от vendor lock in, менять oracle на mariadb, заменой одной строки в конфиге.
+Здесь я упираюсь в ограничения возможностей docker. Утилита compose, которая создана для объединения контейнеров, не предоставляет возможности автоматически вызвать команду инициализации контейнера, не встраивая ее в образ. Можно встроить скрипт инициализации в собственный образ, унаследованный от официального, однако, в образе MySQL [уже есть](https://github.com/docker-library/mysql/blob/master/5.6/docker-entrypoint.sh) скрипт инициализации.
 
 Надеюсь, что когда-нибудь разработчики docker compose реализуют возможность указывать команды, которые надо запускать в контейнере при инициализации. Пока что есть три пути: 
-* самостоятельно выполнять команду `docker-compose run` для импорта дампа своей базы, 
-* автоматизировать этот процесс, создав отдельный контейнер для инициализации базы с клиентским модулем mysql на базе [Alpine Linux](https://hub.docker.com/_/alpine/). К счастью, контейнер для запуска команды инициализации образ можно не экспортировать, достаточно одного Dockerfile с командами.
+* самостоятельно вводить команду для импорта своей базы из дампа;
+* автоматизировать этот процесс через docker-compose, создав отдельный контейнер для инициализации базы с клиентским модулем mysql на базе [Alpine Linux](https://hub.docker.com/_/alpine/). К счастью, сам контейнер для запуска команды инициализации передавать не нужно, достаточно одного Dockerfile с командами;
 * недокументированная возможность - при инициализации базы скрипт entrypoint.sh [обрабатывает](https://github.com/docker-library/mysql/blob/master/5.6/docker-entrypoint.sh#L79) файлы из /docker-entrypoint-initdb.d/
 
-Последнее, этот недокументированный callback, поддерживается во всех официальных образах всех сборок, включая [MariaDB](https://github.com/docker-library/mariadb/blob/master/docker-entrypoint.sh#L79) и [Percona](https://github.com/docker-library/percona/blob/master/docker-entrypoint.sh#L79). В docker-entrypoint.sh из образа Oracle эти команды тоже есть. Буду использовать.
+Последний вариант, своеобразный недокументированный callback, поддерживается всеми официальными образами всех сборок, включая [MariaDB](https://github.com/docker-library/mariadb/blob/master/docker-entrypoint.sh#L79) и [Percona](https://github.com/docker-library/percona/blob/master/docker-entrypoint.sh#L79). В docker-entrypoint.sh из образа Oracle эти команды тоже есть. Буду использовать.
 
 **Data volume image**
-Дамп базы даннных удобно хранить и передавать в одном образе с приложением. Доработаю Dockerfile с образом приложения, который я создал в прошлой статье:
+
+Дамп базы даннных удобно хранить и передавать в одном образе с приложением. Доработаю образ приложения, который я создал в прошлой статье:
 
 ```console
 $ cd ./data_volume/
 $ cp ~/dump.sql .
 $ vi Dockerfile
+$ docker build -t grikdotnet/application .
+$ docker save grikdotnet/application | xz > application.image.tar.xz
 ```
-Добавляю команды в Dockerfile:
+
+Новый Dockerfile:
 ```Dockerfile
 FROM busybox
 RUN mkdir /docker-entrypoint-initdb.d/
@@ -97,11 +107,27 @@ USER docker_volumes
 CMD test "$(ls -A "/scripts/" 2>/dev/null)" || cp /source/* /scripts/
 ```
 
+Если в Dockerfile сначала указать команды записи файлов в каталог, а затем объявить этот каталог как volume, при создании контейнера из образа эти файлы будут скопированы в volume, и смогут быть доступны в других контейнерах. Чтобы дамп не стал мусором при случайном удалении контейнера без параметра -v, я задал осмысленное имя для каталога в host-системе.
+
+Теперь я могу импортировать приложение в виде образа, создать контейнер, и запустить MySQL, автоматически импортировав свой дамп из контейнера приложения. Экспорт-импорт образа приложения описан в прошлой статье.
+
 ```
-$ docker build -t application .
+$ docker run --name application -v "$(pwd)/application:/scripts" grikdotnet/application
+$ sudo ls /var/lib/docker/volumes/
+mysql_dump_v1.0
 $ docker run -d --name mysql -v "$(pwd)/mysql_data:/var/lib/mysql" --volumes-from application -e MYSQL_ROOT_PASSWORD=my_password mysql/mysql-server
+$ docker exec -ti mysql mysql -p
+...
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| my_database        |
++--------------------+
 ```
-Если в Dockerfile сначала создать каталог и записать в него файлы, а затем объявить каталог как volume, при создании контейнера из образа эти файлы будут скопированы в volume, и могут быть доступны в других контейнерах. Чтобы дамп не стал мусором при случайном удалении контейнера без параметра -v, я задал осмысленное имя для каталога в host-системе.
 
 **Подключение PHP**
 
