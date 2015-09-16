@@ -19,6 +19,7 @@
   },
   "scripts": {
     "start": "gitbook serve",
-    "build": "gitbook"
+    "build": "gitbook build",
+    "gh-pages": "scripts/gh-pages"
   }
 }
