@@ -141,7 +141,7 @@ CMD ["php-fpm"]
 Подключение приложения к контейнеру с PHP выполняется параметром `--volumes-from`.
 ```
 $ docker run -d --name=php56 \
-	--volumes-from application/
+	--volumes-from application \
 	my_php_image >>log/docker.php.log 2>&1
 ```
 
