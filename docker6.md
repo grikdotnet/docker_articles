@@ -76,7 +76,7 @@ $ mysqldump -S ./mysql_data/mysql.sock test -uroot -p > dump.sql
 
 Последнее, этот недокументированный callback, поддерживается во всех официальных образах всех сборок, включая [MariaDB](https://github.com/docker-library/mariadb/blob/master/docker-entrypoint.sh#L79) и [Percona](https://github.com/docker-library/percona/blob/master/docker-entrypoint.sh#L79). В docker-entrypoint.sh из образа Oracle эти команды тоже есть. Буду использовать.
 
-**Docker-compose**
+**Data volume image**
 Дамп базы даннных удобно хранить и передавать в одном образе с приложением. Доработаю Dockerfile с образом приложения, который я создал в прошлой статье:
 
 ```console
@@ -84,7 +84,7 @@ $ cd ./data_volume/
 $ cp ~/dump.sql .
 $ vi Dockerfile
 ```
-
+Добавляю команды в Dockerfile:
 ```Dockerfile
 FROM busybox
 RUN mkdir /docker-entrypoint-initdb.d/
@@ -97,6 +97,7 @@ USER docker_volumes
 CMD test "$(ls -A "/scripts/" 2>/dev/null)" || cp /source/* /scripts/
 ```
 
+Если в Dockerfile сначала создать каталог и записать в него данные, а затем объявить его как volume, этот каталог вместе с данными можно будет монтировать в другие контейнеры.
 
 **Подключение PHP**
 
