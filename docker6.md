@@ -46,7 +46,7 @@ $ cat dump.sql  | docker exec -i mysql mysql -B
 ```
 Можно подключиться к серверу в контейнере через сокет в монтированном каталоге:
 ```
-$ mysql -S ./mysql_data/mysql.sock -p
+$ mysql -S ./mysql_data/mysql.sock -uroot -p
 Welcome to the MySQL monitor.  Commands end with ; or \g.
 Server version: 5.6.26 MySQL Community Server (GPL)
 ...
@@ -89,7 +89,7 @@ $ vi Dockerfile
 FROM busybox
 RUN mkdir /docker-entrypoint-initdb.d/
 COPY dump.sql /docker-entrypoint-initdb.d/dump.sql
-VOLUME /docker-entrypoint-initdb.d/
+VOLUME mysql_dump_v1.0:/docker-entrypoint-initdb.d/
 VOLUME /scripts
 RUN adduser -D -u 56789 docker_volumes
 COPY source /source/
@@ -97,7 +97,11 @@ USER docker_volumes
 CMD test "$(ls -A "/scripts/" 2>/dev/null)" || cp /source/* /scripts/
 ```
 
-Если в Dockerfile сначала создать каталог и записать в него данные, а затем объявить его как volume, этот каталог вместе с данными можно будет монтировать в другие контейнеры.
+```
+$ docker build -t application .
+$ docker run -d --name mysql -v "$(pwd)/mysql_data:/var/lib/mysql" --volumes-from application -e MYSQL_ROOT_PASSWORD=my_password mysql/mysql-server
+```
+Если в Dockerfile сначала создать каталог и записать в него файлы, а затем объявить каталог как volume, при создании контейнера из образа эти файлы будут скопированы в volume, и могут быть доступны в других контейнерах. Чтобы дамп не стал мусором при случайном удалении контейнера без параметра -v, я задал осмысленное имя для каталога в host-системе.
 
 **Подключение PHP**
 
