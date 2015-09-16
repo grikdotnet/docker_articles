@@ -1,0 +1,24 @@
+{
+  "name": "docker_articles",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Docker articles",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/grikdotnet/docker_articles.git"
+  },
+  "author": "Grigori Kochanov",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/grikdotnet/docker_articles/issues"
+  },
+  "homepage": "https://github.com/grikdotnet/docker_articles#readme",
+  "dependencies": {
+    "gitbook-cli": "^0.3.6"
+  },
+  "scripts": {
+    "start": "gitbook serve",
+    "build": "gitbook"
+  }
+}
