@@ -1,7 +1,6 @@
-Docker myths and recipes. Monkey patch
-========
+# Docker myths and recipes
 
-Начало: https://github.com/grikdotnet/docker_articles/blob/master/docker1.md
+## Monkey patch
 
 ### Настройка локально
 
@@ -56,7 +55,7 @@ $ docker run --rm php:7-fpm ls /usr/local/lib/php/extensions/no-debug-non-zts-20
 opcache.a
 opcache.so
 ```
-В расширениях только opcache, подключаю его. 
+В расширениях только opcache, подключаю его.
 ```
 $ echo extension_dir = "/usr/local/lib/php/extensions/no-debug-non-zts-20141001" >>  localetc/php/php.ini
 $ echo zend_extension = opcache.so >> localetc/php/php.ini
@@ -86,7 +85,7 @@ $ docker run -v "$(pwd)/localetc:/usr/local/etc" \
 
 С Nginx всё просто и стандартно. Копирую на диск папку конфигов:
 ```
-$ docker cp nginx:/etc/nginx .	
+$ docker cp nginx:/etc/nginx .
 ```
 В папке `nginx/` надо отредактировать nginx.conf, fastcgi_params по вкусу, и создать конфигурационный файл для своего сайта в `nginx/conf.d/`.
 Основное для связи nginx с php - это указать в имени хоста имя контейнера с php, а директивы root и SCRIPT_FILENAME должны указывать на путь, который php поймёт в своём контейнере php7.
@@ -95,7 +94,7 @@ $ docker cp nginx:/etc/nginx .
         fastcgi_pass   php7:9000;
         fastcgi_param  SCRIPT_FILENAME  /scripts$fastcgi_script_name;
 
-Монтирую конфиги в контейнер nginx и запускаю с маппингом 80-го порта контейнера на локальный 8080. 
+Монтирую конфиги в контейнер nginx и запускаю с маппингом 80-го порта контейнера на локальный 8080.
 
 ```
 $ docker rm nginx
@@ -113,13 +112,13 @@ Rock'n'Roll!
 Мейнтейнеры образа php решили писать все логи fpm в /proc/self/fd/2, он же STDERR - как error_log, так и access.log. Однако, лог запросов у меня будет писать nginx, а в работе php меня интересуют только ошибки, поэтому предлагаю отредактировать localetc/php-fpm.conf и написать что-то привычное:
 
 	error_log = /var/log/php/php-fpm.error.log
-	;access.log = /proc/self/fd/2 
+	;access.log = /proc/self/fd/2
 
 В Nginx обошлись без самодеятельности, так что включаю access log в конфиге сайта nginx/conf.d/site.ru.conf
 
     access_log  /var/log/nginx/host.access.log  main;
 
-Теперь можно создать папку для логов c правом записи для демона docker и подмонтировать ее в контейнеры. 
+Теперь можно создать папку для логов c правом записи для демона docker и подмонтировать ее в контейнеры.
 В эту же папку можно писать и вывод контейнеров, при этом контейнеры можно детачить:
 ```
 $ mkdir log
@@ -150,6 +149,3 @@ Reloading nginx: nginx.
 Когда php 7 будет включен в дистрибутив Debian в образе php:7 появится init-скрипт. При желании, можно добавить его самостоятельно из дистрибутива по выбору.
 
 В docker версии 1.7 сетевой адрес в виде имени другого контейнера не резолвился, для этого нужно добавлять в `docker run` опцию `--link php7`
-
-Продолжение: https://github.com/grikdotnet/docker_articles/blob/master/docker4.md
-

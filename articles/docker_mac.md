@@ -1,5 +1,6 @@
-Docker myths and receipts. Mac OS X
-========
+# Docker myths and receipts
+
+## Mac OS X
 
 * VMWare Fusion and Parallels Desktop are better then VirtualBox in performance and stability.
 

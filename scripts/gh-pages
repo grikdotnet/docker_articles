@@ -1,0 +1,11 @@
+#!/bin/sh
+
+gitbook build && \
+git checkout gh-pages && \
+rm -rf articles/ gitbook/ && \
+mv _book/* . && \
+rm -rf _book && \
+git add --all && \
+git commit -m "Rebuild $(date)" && \
+git push origin gh-pages && \
+git checkout master
