@@ -1,7 +1,5 @@
-Docker myths and recipes. Data Volume container.
+Data Volume container.
 ========
-
-Начало: https://github.com/grikdotnet/docker_articles/blob/master/docker1.md
 
 В docker есть любопытный инструмент, который называется [Data Volume сontainer](https://docs.docker.com/userguide/dockervolumes/#creating-and-mounting-a-data-volume-container). 
 У меня он ассоциациируется с паттерном data transfer object.
