@@ -25,7 +25,7 @@ Status: Downloaded newer image for php:7-fpm
 ### PHP
 
 Начну с PHP - его настроить сложнее. Где лежат конфиги для PHP - можно увидеть в его [Dockerfile](https://github.com/docker-library/php/blob/f5e091ac3815dce80ca496298e0cb94638844b10/7.0/fpm/Dockerfile):
-```Dockerfile
+```
 	ENV PHP_INI_DIR /usr/local/etc/php
 	   --with-config-file-scan-dir="$PHP_INI_DIR/conf.d" \
 	WORKDIR /var/www/html
