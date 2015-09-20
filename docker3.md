@@ -6,7 +6,7 @@ Monkey patch
 В этой статье я предполагаю, что служба docker запущена на той же машине, на которой выполняются команды, и у процесса есть доступ на чтение к текущей папке. Еще я подразумеваю, что вы умеете настраивать связку PHP-FPM и Nginx.
 
 Беру образы Nginx и PHP 7.
-```
+```bash
 ~$ docker pull nginx
 ...
 ~$ docker pull php:7-fpm
@@ -15,7 +15,7 @@ Status: Downloaded newer image for php:7-fpm
 
 Теперь у меня есть два чужих класса, которые надо связать вместе через внедрение зависимостей. Самый простой способ добавлять зависимости в чужой код, конечно же, [monkeypatching](https://ru.wikipedia.org/wiki/Monkey_patch)!
 Сначала создаю контейнеры. Помню о [второй сложности программирования](http://martinfowler.com/bliki/TwoHardThings.html) - даю контейнерам вразумительные имена, они будут нужны, чтобы контейнеры могли взаимодействовать между собой.
-```
+```console
 ~$ docker create --name=php7 php:7-fpm
 3d1b737edfcc3f1102fa54c91f9120da4b86d8cbba3092b6f80156c0e31b4d8f
 ~$ docker create --name=nginx nginx
@@ -25,14 +25,17 @@ Status: Downloaded newer image for php:7-fpm
 ### PHP
 
 Начну с PHP - его настроить сложнее. Где лежат конфиги для PHP - можно увидеть в его [Dockerfile](https://github.com/docker-library/php/blob/f5e091ac3815dce80ca496298e0cb94638844b10/7.0/fpm/Dockerfile):
-```
+
+```Dockerfile
 	ENV PHP_INI_DIR /usr/local/etc/php
 	   --with-config-file-scan-dir="$PHP_INI_DIR/conf.d" \
 	WORKDIR /var/www/html
 	COPY php-fpm.conf /usr/local/etc/
+
 ```
+
 Копирую себе из контенера содержимое каталога с файлами конфигурации php
-```console
+```Bash
 ~$ mkdir monkeypatch
 ~$ cd monkeypatch/
 $ docker cp php7:/usr/local/etc localetc
@@ -60,7 +63,7 @@ $ echo extension_dir = "/usr/local/lib/php/extensions/no-debug-non-zts-20141001"
 $ echo zend_extension = opcache.so >> localetc/php/php.ini
 ```
 Пересоздаю контейнер php и монтирую в него папку с конифгами. Путь к монтируемой папке должен быть от корня - служба не знает, из какой папки вызывается клиент docker.
-```
+```console
 $ docker rm php7
 php7
 $ docker run -v "$(pwd)/localetc:/usr/local/etc" --name=php7 php:7-fpm php -i |grep Configuration
