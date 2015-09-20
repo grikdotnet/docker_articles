@@ -1,4 +1,4 @@
-Docker myths and recipes. Херак-херак, и в production!
+Херак-херак, и в production!
 ========
 
 В предыдущей серии: https://github.com/grikdotnet/docker_articles/blob/master/docker3.md я рассказал как легким движением руки запустить сервисы php-fpm и nginx в докере на локальной машине. Это можно сделать удаленно.
