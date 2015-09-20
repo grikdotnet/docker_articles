@@ -123,9 +123,9 @@ Rock'n'Roll!
 
 Теперь можно создать папку для логов c правом записи для демона docker и подмонтировать ее в контейнеры. 
 В эту же папку можно писать и вывод контейнеров, при этом контейнеры можно детачить:
-```
+```Bash
 $ mkdir log
-$ sudo chgrp docker log
+$ sudo chgrp docker log/
 $ sudo chmod g+rwx log/
 $ docker stop nginx php7
 $ docker rm nginx php7
