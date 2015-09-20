@@ -15,7 +15,7 @@ Status: Downloaded newer image for php:7-fpm
 
 Теперь у меня есть два чужих класса, которые надо связать вместе через внедрение зависимостей. Самый простой способ добавлять зависимости в чужой код, конечно же, [monkeypatching](https://ru.wikipedia.org/wiki/Monkey_patch)!
 Сначала создаю контейнеры. Помню о [второй сложности программирования](http://martinfowler.com/bliki/TwoHardThings.html) - даю контейнерам вразумительные имена, они будут нужны, чтобы контейнеры могли взаимодействовать между собой.
-```bash
+```console
 ~$ docker create --name=php7 php:7-fpm
 3d1b737edfcc3f1102fa54c91f9120da4b86d8cbba3092b6f80156c0e31b4d8f
 ~$ docker create --name=nginx nginx
@@ -58,7 +58,7 @@ opcache.a
 opcache.so
 ```
 В расширениях только opcache, можно подключить его. 
-```Bash
+```
 $ echo extension_dir = "/usr/local/lib/php/extensions/no-debug-non-zts-20141001" >>  localetc/php/php.ini
 $ echo zend_extension = opcache.so >> localetc/php/php.ini
 ```
