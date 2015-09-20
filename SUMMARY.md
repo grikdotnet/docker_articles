@@ -1,6 +1,6 @@
 # Summary
 
-* [Docker - это web scale](docker1.md)
+* [Кто такой Docker и где он живет](docker1.md)
 * [Полуавтоматическая винтовка с самонаведением на ногу](docker2.md)
 * [Monkey patch](docker3.md)
 * [Херак-херак, и в production!](docker4.md)
