@@ -142,6 +142,6 @@ $ docker run -d --name=php56 \
 	my_php_image >>log/docker.php.log 2>&1
 ```
 
-Пример пошаговых инструкций по запуску php можно найти в [третьей части](https://github.com/grikdotnet/docker_articles/blob/master/docker3.md).
+Пример пошаговых инструкций по запуску php можно найти в [третьей части](./docker3.md).
 
 Продолжение следует.
