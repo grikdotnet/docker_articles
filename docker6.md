@@ -1,4 +1,4 @@
-Docker myths and recipes. Portable database.
+Portable database.
 ========
 
 В этой заметке я опишу свое исследование работы с mysql в docker - стремление сделать так, чтобы команде разработчиков было удобно.
