@@ -132,4 +132,3 @@ Status: Downloaded newer image for debian:latest
 
 Теперь вам будет проще разбираться с официальной документацией.
 
-Продолжение: https://github.com/grikdotnet/docker_articles/blob/master/docker2.md
