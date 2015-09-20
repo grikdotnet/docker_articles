@@ -57,7 +57,7 @@ $ docker run --rm php:7-fpm ls /usr/local/lib/php/extensions/no-debug-non-zts-20
 opcache.a
 opcache.so
 ```
-В расширениях только opcache, подключаю его. 
+В расширениях только opcache, можно подключить его. 
 ```
 $ echo extension_dir = "/usr/local/lib/php/extensions/no-debug-non-zts-20141001" >>  localetc/php/php.ini
 $ echo zend_extension = opcache.so >> localetc/php/php.ini
