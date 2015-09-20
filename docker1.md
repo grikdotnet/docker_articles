@@ -12,7 +12,7 @@ Je suis Docker.
 
 Поставьте Docker, он небольшой. Для Windows и Mac можно просто поставить Toolbox: https://www.docker.com/toolbox.
 Создавать виртуальную машину и настраивать лучше из командной строки, а не через графическую обертку.
-Заметки для пользователей MAC OS [здесь](https://github.com/grikdotnet/docker_articles/blob/master/docker_mac.md).
+Заметки для пользователей MAC OS [здесь](./docker_mac.md).
 Прочитайте несколько уроков из мануала. Здесь я пишу о том, чего в документации нет.
 
 **Docker - это не виртуализация.**
