@@ -63,7 +63,7 @@ $ echo extension_dir = "/usr/local/lib/php/extensions/no-debug-non-zts-20141001"
 $ echo zend_extension = opcache.so >> localetc/php/php.ini
 ```
 Пересоздаю контейнер php и монтирую в него папку с конифгами. Путь к монтируемой папке должен быть от корня - служба не знает, из какой папки вызывается клиент docker.
-```console
+```Bash
 $ docker rm php7
 php7
 $ docker run -v "$(pwd)/localetc:/usr/local/etc" --name=php7 php:7-fpm php -i |grep Configuration
@@ -86,15 +86,16 @@ $ docker run -v "$(pwd)/localetc:/usr/local/etc" \
 ### NGINX
 
 С Nginx всё просто и стандартно. Копирую на диск папку конфигов:
-```
+```Bash
 $ docker cp nginx:/etc/nginx .	
 ```
 В папке `nginx/` надо отредактировать nginx.conf, fastcgi_params по вкусу, и создать конфигурационный файл для своего сайта в `nginx/conf.d/`.
 Основное для связи nginx с php - это указать в имени хоста имя контейнера с php, а директивы root и SCRIPT_FILENAME должны указывать на путь, который php поймёт в своём контейнере php7.
-
+```Nginx
     location ~ \.php$ {
         fastcgi_pass   php7:9000;
         fastcgi_param  SCRIPT_FILENAME  /scripts$fastcgi_script_name;
+```
 
 Монтирую конфиги в контейнер nginx и запускаю с маппингом 80-го порта контейнера на локальный 8080. 
 
