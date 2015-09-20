@@ -144,7 +144,7 @@ Hello world! 7.0.0RC1
 ```
 
 Когда надо поменять конфигурацию - можно дать команду перезагрузки php и nginx.
-```
+```Bash
 $ docker exec php7 pkill -o -USR2 php-fpm
 $ docker exec nginx service nginx reload
 Reloading nginx: nginx.
