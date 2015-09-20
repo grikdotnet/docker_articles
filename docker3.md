@@ -99,7 +99,7 @@ $ docker cp nginx:/etc/nginx .
 
 Монтирую конфиги в контейнер nginx и запускаю с маппингом 80-го порта контейнера на локальный 8080. 
 
-```
+```Bash
 $ docker rm nginx
 $ docker run -v "$(pwd)/nginx:/etc/nginx" -p 8080:80 --name=nginx nginx &
 $ curl 127.0.0.1:8080/test.php
