@@ -1,9 +1,7 @@
 Docker myths and recipes. Portable database.
 ========
 
-Начало: https://github.com/grikdotnet/docker_articles/blob/master/docker1.md
-
-В этой статье я опишу свое исследование работы с mysql в docker - стремление сделать так, чтобы команде разработчиков было удобно.
+В этой заметке я опишу свое исследование работы с mysql в docker - стремление сделать так, чтобы команде разработчиков было удобно.
 Основные алгоритмы хорошо описаны в документации к образу [MySQL](https://hub.docker.com/r/mysql/mysql-server/), который предоставляет Oracle.
 С PostgreSQL можно работать точно так же.
 
