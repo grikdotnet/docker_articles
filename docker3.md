@@ -25,14 +25,14 @@ Status: Downloaded newer image for php:7-fpm
 ### PHP
 
 Начну с PHP - его настроить сложнее. Где лежат конфиги для PHP - можно увидеть в его [Dockerfile](https://github.com/docker-library/php/blob/f5e091ac3815dce80ca496298e0cb94638844b10/7.0/fpm/Dockerfile):
-```
+```Dockerfile
 	ENV PHP_INI_DIR /usr/local/etc/php
 	   --with-config-file-scan-dir="$PHP_INI_DIR/conf.d" \
 	WORKDIR /var/www/html
 	COPY php-fpm.conf /usr/local/etc/
 ```
 Копирую себе из контенера содержимое каталога с файлами конфигурации php
-```
+```console
 ~$ mkdir monkeypatch
 ~$ cd monkeypatch/
 $ docker cp php7:/usr/local/etc localetc
@@ -47,7 +47,7 @@ conf.d
 
 Правлю конфиги, как обычно. В какой папке PHP ищет расширения?
 Узнать можно, запустив php, например, во временном контейнере.
-```
+```console
 $ docker run --rm php:7-fpm php -i |grep extension_dir
 extension_dir => /usr/local/lib/php/extensions/no-debug-non-zts-20141001 => /usr/local/lib/php/extensions/no-debug-non-zts-20141001
 $ docker run --rm php:7-fpm ls /usr/local/lib/php/extensions/no-debug-non-zts-20141001
