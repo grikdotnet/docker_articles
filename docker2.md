@@ -1,4 +1,4 @@
-Docker myths and recipes. Semi-automatic leg-homing gun
+Полуавтоматическая винтовка с самонаведением на ногу
 ========
 
 Начало: https://github.com/grikdotnet/docker_articles/blob/master/docker1.md
