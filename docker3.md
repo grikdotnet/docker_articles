@@ -58,7 +58,7 @@ opcache.a
 opcache.so
 ```
 В расширениях только opcache, можно подключить его. 
-```
+```Bash
 $ echo extension_dir = "/usr/local/lib/php/extensions/no-debug-non-zts-20141001" >>  localetc/php/php.ini
 $ echo zend_extension = opcache.so >> localetc/php/php.ini
 ```
