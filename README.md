@@ -5,7 +5,7 @@
 
 Cпасибо Сергею Яковлеву (@sergeyklay), Славе Шуранову (@shuranov) и моей жене Кате за коррекцию.
 
-Если вы открыли этот файл прямо на github, рекомендую перейти на [Gitbook](https://www.gitbook.com/book/grikdotnet/docker-myths-and-receipts/details) - там удобнее читать.
+Если вы открыли этот файл прямо на github, рекомендую перейти на [Gitbook](https://www.gitbook.com/book/grikdotnet/docker-myths-and-receipts/details) - здесь удобнее читать.
 
 
 Григорий Кочанов.
