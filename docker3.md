@@ -63,7 +63,7 @@ $ echo extension_dir = "/usr/local/lib/php/extensions/no-debug-non-zts-20141001"
 $ echo zend_extension = opcache.so >> localetc/php/php.ini
 ```
 Пересоздаю контейнер php и монтирую в него папку с конифгами. Путь к монтируемой папке должен быть от корня - служба не знает, из какой папки вызывается клиент docker.
-```Bash
+```
 $ docker rm php7
 php7
 $ docker run -v "$(pwd)/localetc:/usr/local/etc" --name=php7 php:7-fpm php -i |grep Configuration
@@ -99,7 +99,7 @@ $ docker cp nginx:/etc/nginx .
 
 Монтирую конфиги в контейнер nginx и запускаю с маппингом 80-го порта контейнера на локальный 8080. 
 
-```Bash
+```
 $ docker rm nginx
 $ docker run -v "$(pwd)/nginx:/etc/nginx" -p 8080:80 --name=nginx nginx &
 $ curl 127.0.0.1:8080/test.php
