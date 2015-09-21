@@ -12,19 +12,33 @@ Portable database.
 На рабочем сервере я хочу хранить файлы базы в удобном каталоге и работать с базой из командной строки через сокет.
 
 **UID/GID в разных образах**
+
 В так называемом "официальном" образе mysql (и mariadb) у пользователя mysql логичное для docker значение 999:999 в /etc/passwd. В другом официальном образе mysql-server, который предоставляет Oracle, у пользователя mysql стандартный для red-hat uid 27 - и это удобно для доступа к файлам базы утилитами из host-системы. В то же время, в Ubuntu нет стандартного значения uid/gid для mysql.
 Выбирайте себе официальный образ по вкусу. Я для примера взял mysql/mysql-server.
 
+**Пароль для MySQL**
+
+Официальные образы предлагают, что для инициализации хранилища пароли для рута указаны в командной строке как переменная окружения контейнера.
+Это почти так же небезопасно, как запускать базу без пароля - команда `docker inspect mysql` выведет все переменные в секции "Env". Кроме того, переменный окружения досутпны во всех прилинкованных контейнерах.
+Однако, иначе контейнер просто завершает работу с ошибкой.
+Я решу проблему так: инициализирую хранилище из временного контейнера, которому при запуске укажу пароль для root, а для постоянной работы сервис запускается без указания пароля.
+
 **Запускаю локально**
 
-Скачиваю образ MySQL, запускаю во временном контейнере, беру из него конфиг и редактирую:
+Скачиваю образ MySQL, запускаю во временном контейнере, беру из него конфиг и пишу свой дополнительный файл конфига:
 ```console
-$ docker run --rm mysql/mysql-server cat /etc/my.cnf > my.cnf
-$ vi my.cnf
-```
-Правлю в my.cnf нужные мне параметры.
+$ docker run --rm mysql/mysql-server cat /etc/my.cnf
+$ vi extra.cnf
+sql-mode = "STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER"
+innodb_file_per_table
+innodb_flush_log_at_trx_commit = 2
 
-Чтобы файлы базы данных и лог mysql писались в мою папку, подключаю их как data volume.
+[client]
+user=root
+password=my-secret-pw
+```
+
+Чтобы файлы базы данных и лог mysql писались в мою папку, подключаю их как data volume, и инициализирую базу данных. Файл лога при монтировании должен сущестовать, иначе Docker создаст вместо него каталог.
 
 ```console
 $ touch log/mysqld.log
@@ -32,31 +46,46 @@ $ chmod a+w log/mysqld.log
 $ mkdir mysql_data
 $ docker run -d --name mysql \
 	-v "$(pwd)/mysql_data:/var/lib/mysql" \
-    -v "$(pwd)/log/mysqld.log:/var/log/mysqld.log" \
-    -v "$(pwd)/my.cnf:/etc/my.cnf" \
-    -e MYSQL_ALLOW_EMPTY_PASSWORD=yes mysql/mysql-server
+    -e MYSQL_ROOT_PASSWORD=my-secret-pw \
+    mysql/mysql-server
 01effb0bb481d06dc1642a4f18950224049900971d972beea2a6ab311bd60ceb
+$ docker inspect mysql
+         "Env": [
+                "MYSQL_ROOT_PASSWORD=my-secret-pw",
+
+# Жду несколько секунд, чтобы завершилась инициализация хранилища
+
+$ docker stop mysql
+$ docker rm mysql
+$ docker run -d --name mysql \
+	-v "$(pwd)/mysql_data:/var/lib/mysql" \
+    -v "$(pwd)/log/mysqld.log:/var/log/mysqld.log" \
+    -v "$(pwd)/extra.cnf:/etc/extra.cnf" \
+    mysql/mysql-server --defaults-extra-file=/etc/extra.cnf
 ```
+
 Создаю базу из файла дампа.
 ```
-$ cat dump.sql  | docker exec -i mysql mysql -B
+$ cat dump.sql  | docker exec -i mysql mysql --defaults-extra-file=/etc/extra.cnf -B
 ```
 Этот дамп должен быть создан командой `mysqldump --databases db_name` чтобы в нем были инструкции `create database` и `use databsase`.
+Иначе сначала создайте базу данных из консоли, и добавьте ее название в виде параметра.
+
+Из контейнера коносльный клиент mysql вызывается так:
+```
+$ docker exec -ti mysql mysql --defaults-extra-file=/etc/extra.cnf
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+```
 
 Можно подключиться к серверу в контейнере через сокет в монтированном каталоге:
 ```
-$ mysql -S ./mysql_data/mysql.sock -uroot -p
+$ mysql --defaults-file=./extra.cnf -S ./mysql_data/mysql.sock
 Welcome to the MySQL monitor.  Commands end with ; or \g.
-Server version: 5.6.26 MySQL Community Server (GPL)
 ...
 mysql> \q
 Bye
 
-$ mysqldump -S ./mysql_data/mysql.sock test -uroot -p > dump.sql
-```
-Через контейнер дамп базы делается так:
-```
-$ docker exec -i mysql mysqldump -p --databases db_name >dump.sql
+$ mysqldump --defaults-file=./extra.cnf -S ./mysql_data/mysql.sock test > dump.sql
 ```
 
 Теперь у меня есть работающий сервер, в котором мои данные, конфиг и логи лежат в моих каталогах, отдельно от сторонней, неконтролируемой, но изолированной в контейнере [среды исполнения](https://ru.wikipedia.org/wiki/Среда_выполнения) самой СУБД.
@@ -108,8 +137,8 @@ $ docker save grikdotnet/application | xz > application.image.tar.xz
 $ docker run --name application -v "$(pwd)/application:/scripts" grikdotnet/application
 $ sudo ls /var/lib/docker/volumes/
 mysql_dump_v1.0
-$ docker run -d --name mysql -v "$(pwd)/mysql_data:/var/lib/mysql" --volumes-from application -e MYSQL_ROOT_PASSWORD=my_password mysql/mysql-server
-$ docker exec -ti mysql mysql -p
+$ docker run -d --name mysql -v "$(pwd)/mysql_data:/var/lib/mysql" --volumes-from application -e MYSQL_ALLOW_EMPTY_PASSWORD=yes mysql/mysql-server
+$ docker exec -ti mysql mysql
 ...
 mysql> show databases;
 +--------------------+
@@ -121,12 +150,13 @@ mysql> show databases;
 | my_database        |
 +--------------------+
 ```
+Так как образ я создаю для удобства разработчиков, а порт из контейнера в мир не транслируется, пароль для root в mysql я отключаю.
 
 Чтобы заменить MySQL версии Oracle на MariaDB, достаточно удалить контейнер mysql, файлы базы данных, и в строке запуска заменить название образа:
 ```Console
 $ docker rm -fv mysql
 $ sudo rm -rf mysql_data/*
-$ docker run -d --name mysql -v "$(pwd)/mysql_data:/var/lib/mysql" --volumes-from application -e MYSQL_ROOT_PASSWORD=my_password mariadb
+$ docker run -d --name mysql -v "$(pwd)/mysql_data:/var/lib/mysql" --volumes-from application MYSQL_ALLOW_EMPTY_PASSWORD=yes mariadb
 ```
 Можно и не удалять, а запустить несколько контейнеров СУБД, отработать репликацию, или сравнить планы исполнения запросов в разных сборках.
 
