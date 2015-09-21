@@ -77,7 +77,7 @@ $ docker exec -i mysql mysqldump -p --databases db_name >dump.sql
 * автоматизировать этот процесс через docker-compose, создав отдельный контейнер для инициализации базы с клиентским модулем mysql на базе [Alpine Linux](https://hub.docker.com/_/alpine/). К счастью, сам контейнер для запуска команды инициализации передавать не нужно, достаточно одного Dockerfile с командами;
 * недокументированная возможность - при инициализации базы скрипт entrypoint.sh [обрабатывает](https://github.com/docker-library/mysql/blob/master/5.6/docker-entrypoint.sh#L79) файлы из /docker-entrypoint-initdb.d/
 
-Последний вариант, своеобразный callback, поддерживается всеми официальными образами всех сборок, включая [MariaDB](https://github.com/docker-library/mariadb/blob/master/docker-entrypoint.sh#L79), [Percona](https://github.com/docker-library/percona/blob/master/docker-entrypoint.sh#L79) и даже [PostgreSQL](https://github.com/docker-library/postgres/blob/master/9.4/docker-entrypoint.sh#L76). В docker-entrypoint.sh из образа Oracle эти команды тоже есть. 
+Последний вариант, своеобразный callback, поддерживается всеми официальными образами всех сборок, включая [MariaDB](https://github.com/docker-library/mariadb/blob/master/docker-entrypoint.sh#L79), [Percona](https://github.com/docker-library/percona/blob/master/docker-entrypoint.sh#L79), а так же [PostgreSQL](https://github.com/docker-library/postgres/blob/master/9.4/docker-entrypoint.sh#L76) и сборкой Oracle. 
 
 Буду использовать.
 
