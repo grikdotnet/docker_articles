@@ -128,7 +128,7 @@ $ docker rm -fv mysql
 $ sudo rm -rf mysql_data/*
 $ docker run -d --name mysql -v "$(pwd)/mysql_data:/var/lib/mysql" --volumes-from application -e MYSQL_ROOT_PASSWORD=my_password mariadb
 ```
-А можно не удалять, запустить несколько контейнеров СУБД, отработать репликацию, или сравнить планы исполнения запросов в разных сборках.
+Можно и не удалять, а запустить несколько контейнеров СУБД, отработать репликацию, или сравнить планы исполнения запросов в разных сборках.
 
 **Подключение PHP**
 
