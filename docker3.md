@@ -50,7 +50,7 @@ conf.d
 
 Правлю конфиги, как обычно. В какой папке PHP ищет расширения?
 Узнать можно, запустив php, например, во временном контейнере.
-```Bash
+```
 $ docker run --rm php:7-fpm php -i |grep extension_dir
 extension_dir => /usr/local/lib/php/extensions/no-debug-non-zts-20141001 => /usr/local/lib/php/extensions/no-debug-non-zts-20141001
 $ docker run --rm php:7-fpm ls /usr/local/lib/php/extensions/no-debug-non-zts-20141001
