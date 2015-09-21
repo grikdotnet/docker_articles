@@ -6,7 +6,7 @@ Monkey patch
 В этой статье я предполагаю, что служба docker запущена на той же машине, на которой выполняются команды, и у процесса есть доступ на чтение к текущей папке. Еще я подразумеваю, что вы умеете настраивать связку PHP-FPM и Nginx.
 
 Беру образы Nginx и PHP 7.
-```Bash
+```console
 ~$ docker pull nginx
 ...
 ~$ docker pull php:7-fpm
@@ -15,7 +15,7 @@ Status: Downloaded newer image for php:7-fpm
 
 Теперь у меня есть два чужих класса, которые надо связать вместе через внедрение зависимостей. Самый простой способ добавлять зависимости в чужой код, конечно же, [monkeypatching](https://ru.wikipedia.org/wiki/Monkey_patch)!
 Сначала создаю контейнеры. Помню о [второй сложности программирования](http://martinfowler.com/bliki/TwoHardThings.html) - даю контейнерам вразумительные имена, они будут нужны, чтобы контейнеры могли взаимодействовать между собой.
-```Bash
+```
 ~$ docker create --name=php7 php:7-fpm
 3d1b737edfcc3f1102fa54c91f9120da4b86d8cbba3092b6f80156c0e31b4d8f
 ~$ docker create --name=nginx nginx
@@ -35,7 +35,7 @@ Status: Downloaded newer image for php:7-fpm
 ```
 
 Копирую себе из контенера содержимое каталога с файлами конфигурации php
-```Bash
+```
 ~$ mkdir monkeypatch
 ~$ cd monkeypatch/
 $ docker cp php7:/usr/local/etc localetc
@@ -58,7 +58,7 @@ opcache.a
 opcache.so
 ```
 В расширениях только opcache, можно подключить его. 
-```Bash
+```
 $ echo extension_dir = "/usr/local/lib/php/extensions/no-debug-non-zts-20141001" >>  localetc/php/php.ini
 $ echo zend_extension = opcache.so >> localetc/php/php.ini
 ```
@@ -86,7 +86,7 @@ $ docker run -v "$(pwd)/localetc:/usr/local/etc" \
 ### NGINX
 
 С Nginx всё просто и стандартно. Копирую на диск папку конфигов:
-```Bash
+```
 $ docker cp nginx:/etc/nginx .	
 ```
 В папке `nginx/` надо отредактировать nginx.conf, fastcgi_params по вкусу, и создать конфигурационный файл для своего сайта в `nginx/conf.d/`.
@@ -123,7 +123,7 @@ Rock'n'Roll!
 
 Теперь можно создать папку для логов c правом записи для демона docker и подмонтировать ее в контейнеры. 
 В эту же папку можно писать и вывод контейнеров, при этом контейнеры можно детачить:
-```Bash
+```
 $ mkdir log
 $ sudo chgrp docker log/
 $ sudo chmod g+rwx log/
@@ -144,7 +144,7 @@ Hello world! 7.0.0RC1
 ```
 
 Когда надо поменять конфигурацию - можно дать команду перезагрузки php и nginx.
-```Bash
+```
 $ docker exec php7 pkill -o -USR2 php-fpm
 $ docker exec nginx service nginx reload
 Reloading nginx: nginx.
