@@ -34,7 +34,7 @@ $ docker run -d --name mysql \
 	-v "$(pwd)/mysql_data:/var/lib/mysql" \
     -v "$(pwd)/log/mysqld.log:/var/log/mysqld.log" \
     -v "$(pwd)/my.cnf:/etc/my.cnf" \
-    -e MYSQL_ROOT_PASSWORD=my_password mysql/mysql-server
+    -e MYSQL_ALLOW_EMPTY_PASSWORD=yes mysql/mysql-server
 01effb0bb481d06dc1642a4f18950224049900971d972beea2a6ab311bd60ceb
 ```
 Создаю базу из файла дампа.
