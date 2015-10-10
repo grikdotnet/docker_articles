@@ -1,7 +1,8 @@
 # Docker myths and recepies.
 
-When a fifth colleague of mine asked to tell about Docker‬,I understood I should write about it. Then I wrote some more. Ну я подумал, если я убежал так далеко, может быть просто продолжить писать? Так я и сделал.
-В итоге у меня получилась серия заметок, а Никита Гусаков (@nkt) подсказал как объединить их в книгу.
+When a fifth colleague of mine asked to tell about Docker‬,I understood I should write about it. And I figured, since I run this far, maybe I’d just go on writing. And that’s what I did.
+
+So I got a series of notes, and Nikita Gusakov (@nkt) gave me a hint about uniting them to a book.
 
 Cпасибо Сергею Яковлеву (@sergeyklay), Славе Шуранову (@shuranov) и моей жене Кате за коррекцию.
 
