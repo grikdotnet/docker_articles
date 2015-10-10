@@ -29,7 +29,7 @@ Mem:          976M       866M       109M        11M       110M       514M
 -/+ buffers/cache:       241M       735M
 Swap:         1.0G       1.0M       1.0G
 ```
-Запускаю CentOS
+Starting CentOS
 ```
 gri@ubuntu:~$ docker run -ti centos
 [root@301fc721eeb9 /]# uname -a
