@@ -11,8 +11,8 @@ If you never heard about containers in Linux, here is a list of pages you need t
 
 Set up Docker, it's not large. For Windows and Mac you can set up a Toolbox: https://www.docker.com/toolbox.
 It is better to create and set up the virtual machine using command line rather then a GUI tool.
-Заметки для пользователей MAC OS [здесь](./docker_mac.md).
-Прочитайте несколько уроков из мануала. Здесь я пишу о том, чего в документации нет.
+Notes for MAC OS are [here](./docker_mac.md).
+Take a few lessons from a manual. Here I write what the documentation.
 
 **Docker - это не виртуализация.**
 
