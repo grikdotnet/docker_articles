@@ -14,7 +14,7 @@ It is better to create and set up the virtual machine using command line rather 
 Notes for MAC OS are [here](./docker_mac.md).
 Take a few lessons from a manual. Here I write what is missing in the documentation.
 
-**Docker - это не виртуализация.**
+**Docker is not virtualization.**
 
 Вот какой у меня линукс:
 ```
