@@ -9,7 +9,7 @@ If you never heard about containers in Linux, here is a list of pages you need t
 - http://habrahabr.ru/post/253877/
 - https://www.docker.com/whatisdocker
 
-Поставьте Docker, он небольшой. Для Windows и Mac можно просто поставить Toolbox: https://www.docker.com/toolbox.
+Set up Docker, it's not large. For Windows and Mac you can set up a Toolbox: https://www.docker.com/toolbox.
 Создавать виртуальную машину и настраивать лучше из командной строки, а не через графическую обертку.
 Заметки для пользователей MAC OS [здесь](./docker_mac.md).
 Прочитайте несколько уроков из мануала. Здесь я пишу о том, чего в документации нет.
