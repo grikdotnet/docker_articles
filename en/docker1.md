@@ -1,7 +1,7 @@
 Je suis Docker.
 ========
 
-They talk about Docker all the time. I know what you answer: "It's something about containers, virtualization, clouds", "We have everything working already", "It's just for fun", "It will not run with our old kernel", "One can prepare an image for a cloud and launch it the same way", "You can just set up an LXC, chroot or AppArmor". You know you don't need it. One more trend toy. Too lazy to study, at last. 
+They talk about Docker all the time. I know what you answer: "It's just for fun", "One can prepare an image for a cloud and launch it the same way", "You can just set up an LXC, chroot or AppArmor". You know you don't need it. One more trend toy. Too lazy to study, at last. 
 But curious! Ok, read then.
 
 Если вы не слышали о контейнерах в Линуксе, вот список страниц, которые надо прочитать, чтобы понимать о чем речь:
