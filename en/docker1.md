@@ -16,7 +16,7 @@ Take a few lessons from a manual. Here I write what is missing in the documentat
 
 **Docker is not a virtualization.**
 
-Вот какой у меня линукс:
+Here's my Linux:
 ```
 Welcome to Ubuntu 15.04 (GNU/Linux 3.19.0-15-generic x86_64)
 
