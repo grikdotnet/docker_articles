@@ -45,7 +45,7 @@ Swap:          1.0G        1.0M        1.0G
 
 Docker - is not a chroot, their functionality partially match. It's not a security system like AppArmor. Docker uses same containers as LXC, but it's interesting not because of containers. Docker is nothing I thought about it before I read documentation.
 
-То же ядро, память, файловая система, а дистрибутивы, библиотеки и пользователи - разные.
+Same kernel, memory, filesystem, but distributives, libraries, processes and users are different. Though, they can be same as well, it's configurable.
 
 **Docker - это инструмент объекто-ориентированного проектирования.**
 
