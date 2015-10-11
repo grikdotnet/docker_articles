@@ -51,7 +51,7 @@ Same kernel, memory, filesystem, but distributives, libraries, processes and use
 
 A common moot point is whether Nginx configuration files are a part of a web application. Architects fly high with UMLs, system administrators dispute dependencies on launch, both throwing the project down to significant losses.
 The devops guys come to help, wishing to replace a conventional procedural command calls from bash with an OOP design applied to the infrastructure as a whole.
-Docker дает инкапсуляцию, наследование и полиморфизм компонентам системы, таким как база данных и данные.
+Docker provides encapsulation, inheritance and polymorphism to system components, such as database and data.
 Это значит, что можно провести декомпозицию всей информационной системы, выделить приложение, web-сервер, базу данных, системные библиотеки, рабочие данные в независимые компоненты, внедрять зависимости из конфигов, и заставить все это работать одной группой, одинаково на разных компьютерах.
 
 Такой подход можно использовать, чтобы снизить потери рабочего времени дорогих front-end разработчиков на настройку базы данных и Nginx.
