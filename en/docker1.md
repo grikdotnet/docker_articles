@@ -47,7 +47,7 @@ Docker - is not a chroot, their functionality partially match. It's not a securi
 
 Same kernel, memory, filesystem, but distributives, libraries, processes and users are different. Though, they can be same as well, if one whishes.
 
-**Docker - это инструмент объекто-ориентированного проектирования.**
+**Docker is an object oriented infrastructure design tool.**
 
 Регулярно возникает вопрос, является ли конфигурация nginx частью веб-приложения. Системные администраторы спорят с разработчиками.
 Но недавно в мире появились devops и захотели вместо последовательно-процедурного вызова команд из bash думать привычным OOP.
