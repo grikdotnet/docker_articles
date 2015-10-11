@@ -52,7 +52,7 @@ Same kernel, memory, filesystem, but distributives, libraries, processes and use
 A common moot point is whether Nginx configuration files are a part of a web application. Architects fly high with UMLs, system administrators dispute dependencies on launch, both throwing the project down to significant losses.
 The devops guys come to help, wishing to replace a conventional procedural command calls from bash with an OOP design applied to the infrastructure as a whole.
 Docker provides encapsulation, inheritance and polymorphism to system components, such as database and data.
-This means you can decompose a whole information system, distinct an application, a web server, a database, system libraries and work data in the independent components, внедрять зависимости из конфигов, и заставить все это работать одной группой, одинаково на разных компьютерах.
+This means you can decompose a whole information system, distinct an application, a web server, a database, system libraries and work data to the independent components, inject dependencies from configs and get it all working in a group, equally in different .
 
 Такой подход можно использовать, чтобы снизить потери рабочего времени дорогих front-end разработчиков на настройку базы данных и Nginx.
 Чтобы уйти от vendor lock-in. Не обломаться когда openssl на сервере не поддерживает cipher, используемый в API госучреждения.
