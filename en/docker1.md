@@ -124,7 +124,7 @@ Status: Downloaded newer image for debian:latest
 Sometimes docker does not want to die and does not release the port, and the init script does not process the boundary cases yet.
 Well, just don't forget to check `sudo /etc/init.d/docker status`, `sudo netstat -ntpl` and go dance with it.
 
-Еще надо помнить, что порядок операторов для команды docker имеет значение. Если написать `docker create nginx --name=nginx`, --name=nginx будет считаться командой, которую надо выполнить в контейнере, а не именем контейнера.
+One more important notice. The order of parameters for the `docker` command is significant. If you write `docker create nginx --name=nginx`, the --name=nginx will be considered as a command to execute in a container, not a container name.
 
 Теперь вам будет проще разбираться с официальной документацией.
 
