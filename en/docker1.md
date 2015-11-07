@@ -58,7 +58,7 @@ Create open source not just as a code, but as a composition of pre-configured pa
 
 **Beginning**
 
-So, I opened https://docs.docker.com/mac/started/, installed Docker, executed several exercises, and felt, I am being treated as a looser, who authers don't want to overload with information.
+So, I opened https://docs.docker.com/mac/started/, installed Docker, executed several exercises, and felt, I am being treated as a looser, who authors don't want to overload with information.
 Первый вопрос: куда это чертов докер поставился, где лежат его файлы, в каком формате, как оно все устроено?
 Ответы здесь: http://blog.thoward37.me/articles/where-are-docker-images-stored/
 
