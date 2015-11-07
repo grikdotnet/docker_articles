@@ -79,7 +79,7 @@ aface2a79f55: Pull complete
 9a61b6b1315e: Already exists
 ```
 They write nginx 1.9.4 image is 52 Mb, but in fact I am downloading just 3Mb. This is because nginx is built on `debian:jessie` that "Already exists" in my storage.
-Есть много образов на базе Ubuntu. Конечно, стоит собирать свою систему из образов с одним предком.
+There is a lot of images based on Ubuntu as well. Of course, it makes sence to build a stack with the same ancestor image.
 
 **Docker не исполняет контейнеры, а управляет ими**
 
