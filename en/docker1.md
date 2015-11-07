@@ -92,9 +92,9 @@ When the container finishes execution, it is not deleted, if it is not defined e
 Container names are unique within a system. I recommend naming each permanent container. The ones that need not store any data, I recommend rnning with --rm parameter.
 Containers are created with commands `docker run` and `docker create`. You can see all existing containers with `docker ps -a`.
 
-**Docker - это клиент-серверная системная служба**
+**Docker is a client-server system service**
 
-Соответственно, Docker может и зависнуть. Если вы дали команду скачать образ, единственный способ прервать процесс скачивания - перезапустить службу. Авторы уже давно обсуждают что с этим делать, но воз и ныне там.
+And as such, it can freeze. If you orser to download an image, the only way to interrupt the process is to restart the service. Авторы уже давно обсуждают что с этим делать, но воз и ныне там.
 
 Например, в версии 1.8.1 есть воспроизводимая ошибка:
 ```
