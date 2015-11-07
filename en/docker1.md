@@ -1,7 +1,7 @@
 Je suis Docker.
 ========
 
-They are talking about Docker all the time. I know what you answer: "It's just for fun", "One can prepare an image for a cloud and launch it the same way", "You can just set up an LXC, chroot or AppArmor". You know you don't need it. One more trendy toy. Too lazy to study, at last. But curious! Ok, this article is for you.
+They talk about Docker all the time. I know what you answer: "It's just for fun", "One can prepare an image for a cloud and launch it the same way", "You can just set up an LXC, chroot or AppArmor". You know you don't need it. One more trendy toy. Too lazy to study, at last. But curious! Ok, this article is for you.
 
 If you never heard about containers in Linux, here is a list of pages you need to read to understand what's this all about:
 - https://en.wikipedia.org/wiki/LXC
