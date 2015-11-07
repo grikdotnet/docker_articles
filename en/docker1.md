@@ -59,13 +59,13 @@ Create open source not just as a code, but as a composition of pre-configured pa
 **Beginning**
 
 So, I opened https://docs.docker.com/mac/started/, installed Docker, executed several exercises, and felt myself as a looser, who authors don't want to overload with information.
-Первый вопрос: куда это чертов докер поставился, где лежат его файлы, в каком формате, как оно все устроено?
-Ответы здесь: http://blog.thoward37.me/articles/where-are-docker-images-stored/
+First questions: where this damn docker got installed, what is the location of files, what format used, how is it arranged?
+The answers are here: http://blog.thoward37.me/articles/where-are-docker-images-stored/
 
-Если вкратце, для работы с файловой системой Docker может использовать один из нескольких драйверов, обычно это [AUFS](https://en.wikipedia.org/wiki/Aufs), и все файлы контейнеров лежат в /var/lib/docker/aufs/diff/.
-В /var/lib/docker/containers/ служебная информация, а не сами файлы контейнеров.
+In short, to work with file system Docker can use one of its drivers. Usually it's [AUFS](https://en.wikipedia.org/wiki/Aufs), and files for all containers are in /var/lib/docker/aufs/diff/.
+/var/lib/docker/containers/ contains service information, not the containers themselves.
 
-Образы - это как классы в коде. Контейнеры - как объекты, созданные из классов. Основное отличие - контейнер можно закомитить и сделать из него образ. 
+Images are like classes. Containers are like objects, created from classes. The major difference is that a container can be committed and made an image. 
 Образы состоят из так называемых слоев, слои - это папки, которые лежат в /var/lib/docker/aufs/diff/. Обычно образы приложений наследуют какие-то готовые официальные системные образы. Когда Docker скачивает образ, ему нужны только те слои, которых у него нет.
 
 Например, скачаю я официальный образ nginx: https://hub.docker.com/r/library/nginx/tags/
