@@ -66,7 +66,7 @@ In short, to work with file system Docker can use one of its drivers. Usually it
 /var/lib/docker/containers/ contains service information, not the containers themselves.
 
 Images are like classes. Containers are like objects, created from classes. The major difference is that a container can be committed and form an image.
-Images consist of the so called layers. Layers are in fact folders in /var/lib/docker/aufs/diff/. Most of images inherit some ready-made official system images. Когда Docker скачивает образ, ему нужны только те слои, которых у него нет.
+Images consist of the so called layers. Layers are in fact folders in /var/lib/docker/aufs/diff/. Most of images with applications inherit some ready-made official system images. Когда Docker скачивает образ, ему нужны только те слои, которых у него нет.
 
 Например, скачаю я официальный образ nginx: https://hub.docker.com/r/library/nginx/tags/
 ```
