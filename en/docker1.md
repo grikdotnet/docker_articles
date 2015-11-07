@@ -53,14 +53,12 @@ A common moot point is whether Nginx configuration files are a part of a web app
 Here come devops guys, replacing conventional procedural bash calls with an OOP design applied to the whole infrastructure.
 Docker provides encapsulation, inheritance and polymorphism to system components, such as database or data. You can decompose a whole information system. An application, web server, database, system libraries and data can be independent components of a whole. You may inject dependencies from configs and make it work in a group, identically on different servers.
 
-One can use this approach to reduce costs on expensive frontend developers setting up a web server and a database.
-Чтобы уйти от vendor lock-in. Не обломаться когда openssl на сервере не поддерживает cipher, используемый в API госучреждения.
-Чтобы приложение работало независимо от версии PHP или Python на сервере заказчика.
-Создавать open source не только в виде кода, но и настройкой пакетов из нескольких приложений, написанных на разных языках, работающих на разных слоях OSI.
+One can use this approach to reduce costs on expensive frontend developers setting up a web server and a database. To avoid vendor lock-in. To get the application working when an openssl on a production server does not support a cipher used by a government API. To make your application work independently from a PHP or Python version on a customer server.
+Create open source not just as a code, but as a composition of pre-configured packages of different application, written in different languages, working in different OSI layers.
 
-**Начало**
+**Beginning**
 
-Итак, я открыл https://docs.docker.com/mac/started/, поставил Docker, выполнил несколько упражнений, и почувствовал, что меня держат за дурачка-двоечника, которого боятся перегрузить информацией.
+So, I opened https://docs.docker.com/mac/started/, installed Docker, executed several exercises, and felt, I am being treated as a looser, who authers don't want to overload with information.
 Первый вопрос: куда это чертов докер поставился, где лежат его файлы, в каком формате, как оно все устроено?
 Ответы здесь: http://blog.thoward37.me/articles/where-are-docker-images-stored/
 
