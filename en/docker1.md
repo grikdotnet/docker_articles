@@ -84,12 +84,12 @@ There is a lot of images based on Ubuntu as well. Of course, it makes sense to b
 **Docker does not execute containers, but manages them**
 
 Containers are executed by the kernel feature called Cgroups(https://en.wikipedia.org/wiki/Cgroups).
-The `docker` service starts container by command received from a client application, e.g. `docker`, and его когда в контейнере освобождается поток стандартного ввода-вывода. Поэтому в конфигурации Nginx для Docker [пишут](https://hub.docker.com/_/nginx/): 
+The `docker` service starts container by a command received from a client application, like `docker`, and waits until the container releases the standard i/o stream. That's why docker config for Nginx [you can see](https://hub.docker.com/_/nginx/): 
 
 > Be sure to include daemon off; in your custom configuration to ensure that Nginx stays in the foreground so that Docker can track the process properly (otherwise your container will stop immediately after starting)!
 
-Когда работа контейнера заканчивается, он не удаляется, если это не указать специально. Каждый запуск контейнера командой `$ docker run image_name` без параметров `--name` или `--rm` создает новый контейнер с уникальным идентификатором, который остается в системе до удаления. Так что Docker - система, склонная к замусориванию.
-Имена контейнеров в системе уникальны. Рекомендую присваивать имя каждому создаваемому постоянному контейнеру,  а контейнеры, в которых не нужно сохранять данные, рекомендую создавать с параметром --rm.
+When the container finishes execution, it is not deleted, if it is not defined explicitely. Each container run with a command `$ docker run image_name` without paramenters `--name` or `--rm` creates a new container with a unique ID. Such container stays in a system until deleted. Docker is a system prone to littering.
+Container names are unique within a system. I recommend naming each permanent container. The ones that need not store any data, I recommend rnning with --rm parameter.
 Контейнеры создаются командами `docker run` и `docker create`. Посмотреть список всех существующих в системе контейнеров можно командой `docker ps -a`.
 
 **Docker - это клиент-серверная системная служба**
