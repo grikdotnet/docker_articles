@@ -83,7 +83,7 @@ There is a lot of images based on Ubuntu as well. Of course, it makes sense to b
 
 **Docker does not execute containers, but manages them**
 
-Контейнеры исполняются механизмом ядра под названием Cgroups(https://en.wikipedia.org/wiki/Cgroups).
+Containers are executed bu the kernel module called Cgroups(https://en.wikipedia.org/wiki/Cgroups).
 Служба `docker` запускает контейнер по команде, полученной, от клиентского приложения (например, `docker`) и останавливает его когда в контейнере освобождается поток стандартного ввода-вывода. Поэтому в конфигурации Nginx для Docker [пишут](https://hub.docker.com/_/nginx/): 
 
 > Be sure to include daemon off; in your custom configuration to ensure that Nginx stays in the foreground so that Docker can track the process properly (otherwise your container will stop immediately after starting)!
