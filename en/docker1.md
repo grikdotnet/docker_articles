@@ -50,8 +50,8 @@ Same kernel, memory, filesystem, but distributives, libraries, processes and use
 **Docker is an object oriented design tool for an infrastructure.**
 
 A common moot point is whether Nginx configuration files are a part of a web application. Architects fly in UML dreams, hitting dependencies disputes with system administrators right before launch. Conflicts of this kind throw the project down to missed deadlines and significant losses.
+Here come devops guys, replacing conventional procedural bash calls with an OOP design applied to the whole infrastructure.
 Docker provides encapsulation, inheritance and polymorphism to system components, such as database or data. You can decompose a whole information system. An application, web server, database, system libraries and data can be independent components of a whole. You may inject dependencies from configs and make it work in a group, identically on different servers.
-Here come devops guys, replacing conventional procedural bash routines with an OOP design applied to the whole infrastructure.
 
 Такой подход можно использовать, чтобы снизить потери рабочего времени дорогих front-end разработчиков на настройку базы данных и Nginx.
 Чтобы уйти от vendor lock-in. Не обломаться когда openssl на сервере не поддерживает cipher, используемый в API госучреждения.
