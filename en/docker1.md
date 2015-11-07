@@ -81,7 +81,7 @@ aface2a79f55: Pull complete
 They write nginx 1.9.4 image is 52 Mb, but in fact I am downloading just 3Mb. This is because nginx is built on `debian:jessie` that "Already exists" in my storage.
 There is a lot of images based on Ubuntu as well. Of course, it makes sense to build an application stack with the same ancestor image.
 
-**Docker не исполняет контейнеры, а управляет ими**
+**Docker does not execute containers, but manages them**
 
 Контейнеры исполняются механизмом ядра под названием Cgroups(https://en.wikipedia.org/wiki/Cgroups).
 Служба `docker` запускает контейнер по команде, полученной, от клиентского приложения (например, `docker`) и останавливает его когда в контейнере освобождается поток стандартного ввода-вывода. Поэтому в конфигурации Nginx для Docker [пишут](https://hub.docker.com/_/nginx/): 
