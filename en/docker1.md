@@ -1,7 +1,7 @@
 Je suis Docker.
 ========
 
-They talk about Docker all the time. I know what you answer: "It's just for fun", "One can prepare an image for a cloud and launch it the same way", "You can just set up an LXC, chroot or AppArmor". You know you don't need it. One more trendy toy. Too lazy to study, at last. But curious! Ok, read then.
+They are talking about Docker all the time. I know what you answer: "It's just for fun", "One can prepare an image for a cloud and launch it the same way", "You can just set up an LXC, chroot or AppArmor". You know you don't need it. One more trendy toy. Too lazy to study, at last. But curious! Ok, this article is for you.
 
 If you never heard about containers in Linux, here is a list of pages you need to read to understand what's this all about:
 - https://en.wikipedia.org/wiki/LXC
@@ -47,10 +47,10 @@ Docker - is not a chroot, their functionality partially match. It's not a securi
 
 Same kernel, memory, filesystem, but distributives, libraries, processes and users are different. Though, they can be same as well, if one whishes.
 
-**Docker is an object oriented design tool for infrastructure.**
+**Docker is an object oriented design tool for an infrastructure.**
 
-A common moot point is whether Nginx configuration files are a part of a web application. Architects fly high with UMLs, system administrators dispute dependencies before launch, both throwing the project down to significant losses.
-Here come devops guys, wishing to replace a conventional procedural command calls in bash with an OOP design applied to the infrastructure as a whole.
+A common moot point is whether Nginx configuration files are a part of a web application. Architects fly in UML dreams, hitting dependencies disputes with system administrators right before launch. Conflicts of this kind throw the project down to missed deadlines and significant losses.
+Here come devops guys, wishing to replace conventional procedural command calls in bash with an OOP design applied to the infrastructure as a whole.
 Docker provides encapsulation, inheritance and polymorphism to system components, such as database and data.
 This means you can decompose a whole information system, distinct an application, a web server, a database, system libraries and work data to the independent components, inject dependencies from configs and make it all work in a group, identically in different servers.
 
