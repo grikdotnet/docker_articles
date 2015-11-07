@@ -53,7 +53,7 @@ A common moot point is whether Nginx configuration files are a part of a web app
 Here come devops guys, replacing conventional procedural bash calls with an OOP design applied to the whole infrastructure.
 Docker provides encapsulation, inheritance and polymorphism to system components, such as database or data. You can decompose a whole information system. An application, web server, database, system libraries and data can be independent components of a whole. You may inject dependencies from configs and make it work in a group, identically on different servers.
 
-Такой подход можно использовать, чтобы снизить потери рабочего времени дорогих front-end разработчиков на настройку базы данных и Nginx.
+One can use this approach to reduce costs on expensive frontend developers setting up a web server and a database.
 Чтобы уйти от vendor lock-in. Не обломаться когда openssl на сервере не поддерживает cipher, используемый в API госучреждения.
 Чтобы приложение работало независимо от версии PHP или Python на сервере заказчика.
 Создавать open source не только в виде кода, но и настройкой пакетов из нескольких приложений, написанных на разных языках, работающих на разных слоях OSI.
