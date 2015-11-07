@@ -65,7 +65,7 @@ The answers are here: http://blog.thoward37.me/articles/where-are-docker-images-
 In short, to work with file system Docker can use one of its drivers. Usually it's [AUFS](https://en.wikipedia.org/wiki/Aufs), and files for all containers are in /var/lib/docker/aufs/diff/.
 /var/lib/docker/containers/ contains service information, not the containers themselves.
 
-Images are like classes. Containers are like objects, created from classes. The major difference is that a container can be committed and made an image. 
+Images are like classes. Containers are like objects, created from classes. The major difference is that a container can be committed and made an image.
 Образы состоят из так называемых слоев, слои - это папки, которые лежат в /var/lib/docker/aufs/diff/. Обычно образы приложений наследуют какие-то готовые официальные системные образы. Когда Docker скачивает образ, ему нужны только те слои, которых у него нет.
 
 Например, скачаю я официальный образ nginx: https://hub.docker.com/r/library/nginx/tags/
