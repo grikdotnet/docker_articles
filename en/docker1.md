@@ -94,7 +94,7 @@ Containers are created with commands `docker run` and `docker create`. You can s
 
 **Docker is a client-server system service**
 
-And as such, it can freeze. If you orser to download an image, the only way to interrupt the process is to restart the service. Авторы уже давно обсуждают что с этим делать, но воз и ныне там.
+And as such, it can freeze. If you orser to download an image, the only way to interrupt the process is to restart the service. Authors discuss how to solve it for a year already, but nothing changes.
 
 Например, в версии 1.8.1 есть воспроизводимая ошибка:
 ```
