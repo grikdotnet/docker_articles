@@ -90,7 +90,7 @@ The `docker` service starts container by a command received from a client applic
 
 When the container finishes execution, it is not deleted, if it is not defined explicitely. Each container run with a command `$ docker run image_name` without paramenters `--name` or `--rm` creates a new container with a unique ID. Such container stays in a system until deleted. Docker is a system prone to littering.
 Container names are unique within a system. I recommend naming each permanent container. The ones that need not store any data, I recommend rnning with --rm parameter.
-Контейнеры создаются командами `docker run` и `docker create`. Посмотреть список всех существующих в системе контейнеров можно командой `docker ps -a`.
+Containers are created with commands `docker run` and `docker create`. You can see al existing containers with `docker ps -a`.
 
 **Docker - это клиент-серверная системная служба**
 
