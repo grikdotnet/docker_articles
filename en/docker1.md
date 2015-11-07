@@ -108,7 +108,7 @@ Press Ctrl-C, then start the download again.
 docker@dev:~$ docker pull debian
 Using default tag: latest
 ```
-Картина Репина "Приплыли". То есть, зависли. Надо перезапустить демон.
+Here we are, frozen. Restart the daemon.
 ```
 docker@dev:~$ sudo /etc/init.d/docker restart
 Need TLS certs for dev,127.0.0.1,10.0.2.15,192.168.99.104
@@ -121,8 +121,8 @@ latest: Pulling from library/debian
 ...
 Status: Downloaded newer image for debian:latest
 ```
-Бывает, что демон docker не хочет умирать самостоятельно и не освобождает порт, а init-скрипт пограничные случаи еще не отрабатывает.
-Так что не забывайте проверять `sudo /etc/init.d/docker status`, `sudo netstat -ntpl`, доставайте бубен и танцуйте.
+Sometimes docker does not want to die and does not release the port, and the init script does not process the boundary cases yet.
+So, don't forget to check `sudo /etc/init.d/docker status`, `sudo netstat -ntpl` and go dance with it.
 
 Еще надо помнить, что порядок операторов для команды docker имеет значение. Если написать `docker create nginx --name=nginx`, --name=nginx будет считаться командой, которую надо выполнить в контейнере, а не именем контейнера.
 
