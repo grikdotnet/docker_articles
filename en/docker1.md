@@ -96,14 +96,14 @@ Containers are created with commands `docker run` and `docker create`. You can s
 
 And as such, it can freeze. If you orser to download an image, the only way to interrupt the process is to restart the service. Authors discuss how to solve it for two years already, but no solution in sight.
 
-Например, в версии 1.8.1 есть воспроизводимая ошибка:
+For example, there is a bug in 1.8.1:
 ```
 docker@dev:~$ docker pull debian
 Using default tag: latest
 latest: Pulling from library/debian
 2c49f83e0b13: Downloading [===================>                               ] 19.89 MB/51.37 MB
 ```
-Нажимаю Ctrl-C, затем сразу запускаю скачивание повторно.
+Press Ctrl-C, then start the download again.
 ```
 docker@dev:~$ docker pull debian
 Using default tag: latest
