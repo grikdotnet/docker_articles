@@ -66,9 +66,9 @@ In short, to work with file system Docker can use one of its drivers. Usually it
 /var/lib/docker/containers/ contains service information, not the containers themselves.
 
 Images are like classes. Containers are like objects, created from classes. The major difference is that a container can be committed and form an image.
-Images consist of the so called layers. Layers are in fact folders in /var/lib/docker/aufs/diff/. Most of images with applications inherit some ready-made official system images. Когда Docker скачивает образ, ему нужны только те слои, которых у него нет.
+Images consist of the so called layers. Layers are in fact folders in /var/lib/docker/aufs/diff/. Most of images with applications inherit from some ready-made official system images. When Docker downloads an image, it needs just the missing layers.
 
-Например, скачаю я официальный образ nginx: https://hub.docker.com/r/library/nginx/tags/
+E.g. I download an image https://hub.docker.com/r/library/nginx/tags/
 ```
 docker@dev:~$ docker pull nginx
 latest: Pulling from nginx
@@ -78,7 +78,7 @@ aface2a79f55: Pull complete
 902b87aaaec9: Already exists
 9a61b6b1315e: Already exists
 ```
-Пишут, что образ nginx 1.9.4 размером 52 мб, а по факту, у меня скачается всего 3 мб. Это потому, что nginx собран на образе `debian:jessie`, который у меня "Already exists".
+They write nginx 1.9.4 image is 52 Mb, but in fact I am downloading just 3Mb. This is because nginx is built on `debian:jessie` that "Already exists" in my storage.
 Есть много образов на базе Ubuntu. Конечно, стоит собирать свою систему из образов с одним предком.
 
 **Docker не исполняет контейнеры, а управляет ими**
