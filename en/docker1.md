@@ -16,6 +16,8 @@ Take a few lessons from a manual. This articles contains what the documentation 
 
 **Docker is not virtualization.**
 
+Docker - is not a chroot, their functionality partially match. It's not a security system like AppArmor. Docker uses same containers as LXC, but it's interesting not because of containers. Docker is nothing I thought about it before I read documentation.
+
 Here's my Linux:
 ```
 Welcome to Ubuntu 15.04 (GNU/Linux 3.19.0-15-generic x86_64)
@@ -43,9 +45,7 @@ Swap:          1.0G        1.0M        1.0G
 
 ```
 
-Docker - is not a chroot, their functionality partially match. It's not a security system like AppArmor. Docker uses same containers as LXC, but it's interesting not because of containers. Docker is nothing I thought about it before I read documentation.
-
-Same kernel, memory, filesystem, but distributives, libraries, processes and users are different. Though, they can be same as well, if one whishes.
+Here you can see same kernel, memory, filesystem, but distributives, libraries, processes and users are different. Though, they can be same as well, if one whishes.
 
 **Docker is an object oriented design tool for an infrastructure.**
 
