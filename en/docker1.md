@@ -56,31 +56,6 @@ Docker provides encapsulation, inheritance and polymorphism to system components
 One can use this approach to reduce costs on expensive frontend developers setting up a web server and a database. To avoid vendor lock-in. To get the application working when an openssl on a production server does not support a cipher used by a government API. To make your application work independently from a PHP or Python version on a customer server.
 Create open source not just as a code, but as a composition of pre-configured packages of different application, written in different languages, working in different OSI layers.
 
-**Beginning**
-
-So, I opened https://docs.docker.com/mac/started/, installed Docker, executed several exercises, and felt myself as a looser, who authors don't want to overload with information.
-First questions: where this damn docker got installed, what is the location of files, what format used, how is it arranged?
-The answers are here: http://blog.thoward37.me/articles/where-are-docker-images-stored/
-
-In short, to work with file system Docker can use one of its drivers. Usually it's [AUFS](https://en.wikipedia.org/wiki/Aufs), and files for all containers are in /var/lib/docker/aufs/diff/.
-/var/lib/docker/containers/ contains service information, not the containers themselves.
-
-Images are like classes. Containers are like objects, created from classes. The major difference is that a container can be committed and form an image.
-Images consist of the so called layers. Layers are in fact folders in /var/lib/docker/aufs/diff/. Most of images with applications inherit from some ready-made official system images. When Docker downloads an image, it needs just the missing layers.
-
-E.g. I download an image https://hub.docker.com/r/library/nginx/tags/
-```
-docker@dev:~$ docker pull nginx
-latest: Pulling from nginx
-aface2a79f55: Pull complete
-72b67c8ad0ca: Downloading [=============>                                     ] 883.6 kB/3.386 MB
-9108e25be489: Download complete
-902b87aaaec9: Already exists
-9a61b6b1315e: Already exists
-```
-They write nginx 1.9.4 image is 52 Mb, but in fact I am downloading just 3Mb. This is because nginx is built on `debian:jessie` that "Already exists" in my storage.
-There is a lot of images based on Ubuntu as well. Of course, it makes sense to build all images of an application stack with the same ancestor image.
-
 **Docker does not execute containers, but manages them**
 
 Containers are executed by the kernel feature called Cgroups(https://en.wikipedia.org/wiki/Cgroups).
@@ -94,7 +69,7 @@ Containers are created with commands `docker run` and `docker create`. You can s
 
 **Docker is a client-server system service**
 
-And as such, it can freeze. If you order to download an image, the only way to interrupt the process is to restart the service. Authors discuss how to solve it for two years already, but no solution in sight.
+And as such, it can freeze. There is no command to interrupt the image downloading process, you have to restart the Docker service. Authors discuss how to solve it for two years already, but no solution in sight.
 
 For example, there is a bug in 1.8.1:
 ```
@@ -123,6 +98,32 @@ Status: Downloaded newer image for debian:latest
 ```
 Sometimes docker does not want to die and does not release the port, and the init script does not process the boundary cases yet.
 Well, just don't forget to check `sudo /etc/init.d/docker status`, `sudo netstat -ntpl` and go dance with it.
+
+**Beginning**
+
+So, I opened https://docs.docker.com/mac/started/, installed Docker, executed several exercises, and felt myself as a looser, who authors don't want to overload with information.
+First questions: where this damn docker got installed, what is the location of files, what format used, how is it arranged?
+The answers are here: http://blog.thoward37.me/articles/where-are-docker-images-stored/
+
+In short, to work with file system Docker can use one of its drivers. Usually it's [AUFS](https://en.wikipedia.org/wiki/Aufs), and files for all containers are in /var/lib/docker/aufs/diff/.
+/var/lib/docker/containers/ contains service information, not the containers themselves.
+
+Images are like classes. Containers are like objects, created from classes. The major difference is that a container can be committed and form an image.
+Images consist of the so called layers. Layers are in fact folders in /var/lib/docker/aufs/diff/. Most of images with applications inherit from some ready-made official system images. When Docker downloads an image, it needs just the missing layers.
+
+E.g. I download an image https://hub.docker.com/r/library/nginx/tags/
+```
+docker@dev:~$ docker pull nginx
+latest: Pulling from nginx
+aface2a79f55: Pull complete
+72b67c8ad0ca: Downloading [=============>                                     ] 883.6 kB/3.386 MB
+9108e25be489: Download complete
+902b87aaaec9: Already exists
+9a61b6b1315e: Already exists
+```
+They write nginx 1.9.4 image is 52 Mb, but in fact I am downloading just 3Mb. This is because nginx is built on `debian:jessie` that "Already exists" in my storage.
+There is a lot of images based on Ubuntu as well. Of course, it makes sense to build all images of an application stack with the same ancestor image.
+
 
 One more important notice. The order of parameters for the `docker` command is significant. If you write `docker create nginx --name=nginx`, the --name=nginx parameter is considered as a command to execute in a container, not a container name.
 
