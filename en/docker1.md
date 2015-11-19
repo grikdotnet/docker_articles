@@ -101,7 +101,7 @@ Well, just don't forget to check `sudo /etc/init.d/docker status`, `sudo netstat
 
 **Beginning**
 
-So, I opened https://docs.docker.com/mac/started/, installed Docker, executed several exercises, and felt myself lost.
+So, I opened https://docs.docker.com/mac/started/, installed Docker, executed several exercises, and felt lost.
 First questions: where this damn docker got installed, what is the location of files, what format used, how is it arranged?
 The answers are here: http://blog.thoward37.me/articles/where-are-docker-images-stored/
 
