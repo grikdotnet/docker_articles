@@ -16,7 +16,7 @@ Take a few lessons from a manual. This articles contains what the documentation 
 
 **Docker is not virtualization.**
 
-Docker - is not a chroot, their functionality partially match. It's not a security system like AppArmor. Docker uses same containers as LXC, but it's interesting not because of containers. Docker is nothing I thought about it before I read documentation.
+It is not a chroot, their functionality partially match. It's not a security system like AppArmor. Docker uses same containers as LXC, but it's interesting not because of containers. Docker is nothing I thought about it before I read documentation.
 
 Here's my Linux:
 ```
