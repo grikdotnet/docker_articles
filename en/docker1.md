@@ -121,7 +121,7 @@ aface2a79f55: Pull complete
 902b87aaaec9: Already exists
 9a61b6b1315e: Already exists
 ```
-They write nginx 1.9.4 image is 52 Mb, but in fact I am downloading just 3Mb. This is because nginx is built on `debian:jessie` that "Already exists" in my storage.
+It writes that nginx 1.9.4 image is 52 Mb, but in fact I am downloading just 3Mb. This is because nginx is built on `debian:jessie` that "Already exists" in my storage.
 There is a lot of images based on Ubuntu as well. Of course, it makes sense to build all images of an application stack with the same ancestor image.
 
 
