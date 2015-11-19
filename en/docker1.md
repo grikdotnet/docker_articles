@@ -45,7 +45,7 @@ Swap:          1.0G        1.0M        1.0G
 
 ```
 
-Here you can see same kernel, memory, filesystem, but distributives, libraries, processes and users are different. Though, they can be same as well, if one whishes.
+Here you can see same kernel, memory, filesystem, but distributions, libraries, processes and users are different. Though, they can be same as well, if one whishes.
 
 **Docker is an object oriented design tool for an infrastructure.**
 
