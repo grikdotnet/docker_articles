@@ -124,6 +124,8 @@ aface2a79f55: Pull complete
 It writes that nginx 1.9.4 image is 52 Mb, but in fact I am downloading just 3Mb. This is because nginx is built on `debian:jessie` that "Already exists" in my storage.
 There is a lot of images based on Ubuntu as well. Of course, it makes sense to build all images of an application stack with the same ancestor image.
 
+**Use cases**
+There are many articles covering 
 
 One more important notice. The order of parameters for the `docker` command is significant. If you write `docker create nginx --name=nginx`, the --name=nginx parameter is considered as a command to execute in a container, not a container name.
 
