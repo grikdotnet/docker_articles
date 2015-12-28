@@ -1,7 +1,7 @@
 Semi-automatic self-homing gun
 ========
 
-**How not to use Docker.**
+### How not to use Docker.
 
 There is always a difference between examples from manual and real life usage. When you open a page of andy official software like [Nginx](https://hub.docker.com/_/nginx/), you will find the "How to use this image" section.
 We are offered to create the image based on the official one, copying our files into it, set up the port mapping out to the world, and mount the folder with configs.
@@ -25,7 +25,7 @@ That's why teams are putting beside containers with different services, create a
 
 I use inheritance to extend the features of existing images, keep incapsulation and taking into accounting the [Liskov Substitution Principle](https://en.wikipedia.org/wiki/Liskov_substitution_principle). For example, to add extensions to php I inherit from an official php image just like the docker hub suggests.
 
-**Monkeypatch**
+### Monkeypatch
 
 Let's make a web stack with Nginx and PHP 7.
 ```
@@ -133,3 +133,46 @@ Hello world! 7.0.0RC1
 Rock'n'Roll!
 
 In version 1.7 the `docker run` command required the --link parameter to resolve the name of another container. In 1.8 it works without this parameter.
+
+
+### Logs
+
+Php image maintainers decided to write all fpm logs to /proc/self/fd/2, aka STDERR - both error_log and access.log. Though, my access log will be written by nginx, and from php I nedd only errors, so I offer editing localetc/php-fpm.conf:
+
+	error_log = /var/log/php/php-fpm.error.log
+	;access.log = /proc/self/fd/2 
+
+Nginx settings are common, so I just turn on access log in a host config nginx/conf.d/example.com.conf
+
+    access_log  /var/log/nginx/example.com.access.log  main;
+
+Now we can create the folder for logs with write permissions for the docker daemon and mount it inside containers. 
+Same folder can be used to record containers output as well. This allown us to detouch containers as well:
+```
+$ mkdir log
+$ sudo chgrp docker log/
+$ sudo chmod g+rwx log/
+$ docker stop nginx php7
+$ docker rm nginx php7
+$ docker run -d --name=php7 \
+	-v "$(pwd)/localetc:/usr/local/etc" \
+	-v "$(pwd)/scripts:/scripts" \
+	-v "$(pwd)/log:/var/log/php" \
+	php:7-fpm >>log/docker.php.log 2>&1
+$ docker run -d --name=nginx \
+	-v "$(pwd)/nginx:/etc/nginx" \
+	-v "$(pwd)/log:/var/log/nginx" \
+	-p 8080:80 \
+	nginx >>log/docker.nginx.log 2>&1
+$ curl 127.0.0.1:8080/test.php
+Hello world! 7.0.0RC1
+```
+
+If you edit configs, give a command to reload php and nginx.
+```
+$ docker exec php7 pkill -o -USR2 php-fpm
+$ docker exec nginx service nginx reload
+Reloading nginx: nginx.
+```
+
+I hope when php 7 will appear in Debian, the php:7 image will get an init-script. For now, add it from a distro of choice, if you wish.
