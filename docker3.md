@@ -87,7 +87,9 @@ $ docker run -v "$(pwd)/localetc:/usr/local/etc" \
 
 С Nginx всё просто и стандартно. Копирую на диск папку конфигов:
 ```
+$ docker run --name=nginx nginx
 $ docker cp nginx:/etc/nginx .	
+$ docker rm nginx
 ```
 В папке `nginx/` надо отредактировать nginx.conf, fastcgi_params по вкусу, и создать конфигурационный файл для своего сайта в `nginx/conf.d/`.
 Основное для связи nginx с php - это указать в имени хоста имя контейнера с php, а директивы root и SCRIPT_FILENAME должны указывать на путь, который php поймёт в своём контейнере php7.
@@ -100,7 +102,6 @@ $ docker cp nginx:/etc/nginx .
 Монтирую конфиги в контейнер nginx и запускаю с маппингом 80-го порта контейнера на локальный 8080. 
 
 ```
-$ docker rm nginx
 $ docker run -v "$(pwd)/nginx:/etc/nginx" -p 8080:80 --name=nginx nginx &
 $ curl 127.0.0.1:8080/test.php
 172.17.0.65 -  29/Aug/2015:15:50:29 +0000 "GET /test.php" 200
